@@ -1,0 +1,96 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f7f7f7;
+    margin: 0;
+    padding: 0;
+}
+h1, h2, h3 {
+    color: #333;
+}
+.container {
+    max-width: 700px;
+    margin: 32px auto 0 auto;
+    padding: 24px 28px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    background: #fff;
+    width: 100%;
+    box-sizing: border-box;
+}
+form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+label {
+    font-weight: bold;
+    color: #555;
+}
+input, textarea, select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+button {
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 8px;
+}
+button:hover {
+    background: #1565c0;
+}
+table {
+    background: #fff;
+    border-collapse: collapse;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 0 auto 32px auto;
+}
+@media (max-width: 800px) {
+    .container {
+        max-width: 100%;
+        padding: 0 8px;
+    }
+    table, form {
+        font-size: 15px;
+    }
+    th, td {
+        padding: 6px;
+    }
+}
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+th {
+    background: #1976d2;
+    color: #fff;
+}
+tr:hover {
+    background: #f1f1f1;
+}
+a {
+    color: #1976d2;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+img {
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
