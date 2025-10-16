@@ -1,9 +1,16 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<c:if test="${not empty sessionScope.lang}">
+    <fmt:setLocale value="${sessionScope.lang}" scope="request" />
+</c:if>
+<fmt:setBundle basename="i18n.home" scope="request" />
 <html>
 <head>
     <title>about</title>
 </head>
 <body>
-<h1>GIỚI THIỆU</h1>
+<h1><fmt:message key="about.title"/></h1>
 </body>
 </html>

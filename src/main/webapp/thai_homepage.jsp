@@ -29,7 +29,7 @@
     <a href="/lab5/index.jsp">TỔNG QUAN LAB 5</a>
     <br/>
     <hr/>
-    <a href="/lab6/index.jsp">TỔNG QUAN LAB 6</a>
+    <div>TỔNG QUAN LAB 6 ( Code DB và test trực tiếp trên main )</div>
     <br/>
     <hr/>
     <a href="/lab7/index.jsp">TỔNG QUAN LAB 7</a>

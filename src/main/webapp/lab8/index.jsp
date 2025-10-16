@@ -7,10 +7,7 @@
 <body>
 <h1>Tổng hợp các bài tập của lab 8</h1>
 <br/>
-<a href="${pageContext.request.contextPath}/lab8/home/index">Bài 1: TỔ CHỨC LAYOUT</a>
-<br/>
-<hr/>
-<a href="${pageContext.request.contextPath}/#">Bài 3: </a>
+<a href="${pageContext.request.contextPath}/lab8/home/index">TỔ CHỨC LAYOUT & CHUYỂN ĐỔI NGÔN NGỮ</a>
 <br/>
 </body>
 </html>

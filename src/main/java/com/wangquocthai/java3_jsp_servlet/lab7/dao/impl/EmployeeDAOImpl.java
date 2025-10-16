@@ -5,7 +5,6 @@ import com.wangquocthai.java3_jsp_servlet.lab7.entity.Employee;
 import com.wangquocthai.java3_jsp_servlet.lab7.utils.Jdbc;
 
 import java.sql.ResultSet;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
