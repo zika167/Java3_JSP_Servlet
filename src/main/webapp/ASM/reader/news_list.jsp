@@ -1,32 +1,17 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <html>
 <head>
     <title>ABC News - Danh sách tin tức</title>
     <link rel="stylesheet" href="/ASM/assets/css/reader.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
-        <div class="container">
-            <h1>ABC News</h1>
-            <nav class="nav">
-                <a href="/ASM/index.jsp" class="nav-link">Trang chủ</a>
-                <a href="#" class="nav-link">Văn hóa</a>
-                <a href="#" class="nav-link">Pháp luật</a>
-                <a href="#" class="nav-link">Thể thao</a>
-                <a href="#" class="nav-link">Công nghệ</a>
-                <a href="#" class="nav-link">Kinh tế</a>
-                <!-- Auth links for news_list context -->
-                <a href="${pageContext.request.contextPath}/auth/login" class="nav-link">Login</a>
-                <a href="${pageContext.request.contextPath}/auth/signup" class="nav-link">Sign up</a>
-                <!-- Language links -->
-                <a href="?lang=vi" class="nav-link">VI</a>
-                <a href="?lang=en" class="nav-link">EN</a>
-            </nav>
-        </div>
+        <jsp:include page="/ASM/layout/header.jsp"/>
     </header>
 
     <!-- Main Content -->
@@ -37,70 +22,108 @@
             <!-- Danh sách bài viết -->
             <div class="articles-list">
                 <c:forEach var="news" items="${newsList}">
-                    <div class="article-item">
-                        <div class="article-image">
-                            <img src="${pageContext.request.contextPath}/ASM/assets/images/${news.image}" alt="${news.title}">
-                        </div>
-                        <div class="article-content">
-                            <h3 class="article-title">${news.title}</h3>
-                            <p class="article-summary">${news.content}</p>
-                            <div class="article-meta">
-                                <span class="article-author">Tác giả: ${news.author}</span>
-                                <span class="article-date">
-                                    Ngày đăng: <fmt:formatDate value="${news.postedDate}" pattern="dd/MM/yyyy"/>
-                                </span>
+                    <article class="news-article">
+                        <a href="${pageContext.request.contextPath}/news/detail/${news.id}" class="news-link">
+                            <div class="news-image">
+                                <img src="${pageContext.request.contextPath}/ASM/assets/images/${news.image}" 
+                                     alt="${news.title}"
+                                     onerror="this.src='https://placehold.co/800x450'">
                             </div>
-                            <a href="${pageContext.request.contextPath}/news/detail/${news.id}" class="btn-detail">Xem chi tiết</a>
-                        </div>
-                    </div>
+                            <div class="news-content">
+                                <h3 class="news-title">${news.title}</h3>
+                                <p class="news-summary text-truncate">${news.content}</p>
+                                <div class="news-meta">
+                                    <span class="news-author">
+                                        <i class="fas fa-user"></i> ${news.author}
+                                    </span>
+                                    <span class="news-date">
+                                        <i class="far fa-clock"></i>
+                                        <fmt:formatDate value="${news.postedDate}" pattern="HH:mm dd/MM/yyyy"/>
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
+                    </article>
                 </c:forEach>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination">
+                <c:if test="${totalPages > 1}">
+                    <div class="pagination-controls">
+                        <a href="?page=${currentPage - 1}" 
+                           class="page-link ${currentPage == 1 ? 'disabled' : ''}"
+                           ${currentPage == 1 ? 'aria-disabled="true"' : ''}>
+                            <i class="fas fa-chevron-left"></i> Trang trước
+                        </a>
+                        
+                        <div class="page-numbers">
+                            <c:forEach begin="1" end="${totalPages}" var="pageNum">
+                                <a href="?page=${pageNum}" 
+                                   class="page-number ${pageNum == currentPage ? 'active' : ''}">
+                                    ${pageNum}
+                                </a>
+                            </c:forEach>
+                        </div>
+                        
+                        <a href="?page=${currentPage + 1}" 
+                           class="page-link ${currentPage == totalPages ? 'disabled' : ''}"
+                           ${currentPage == totalPages ? 'aria-disabled="true"' : ''}>
+                            Trang sau <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                </c:if>
             </div>
         </div>
 
         <!-- Sidebar -->
         <div class="sidebar">
             <!-- 5 bản tin được xem nhiều -->
-                <div class="sidebar-box hot-news">
-                    <h3>5 bản tin được xem nhiều</h3>
-                    <ul>
-                        <c:forEach var="hot" items="${applicationScope.hotNews}">
-                            <li>
-                                <a href="${pageContext.request.contextPath}/news/detail/${hot.id}">
-                                    ${hot.title}
-                                </a>
-                            </li>
-                        </c:forEach>
-                    </ul>
+            <div class="sidebar-box hot-news">
+                <h3>5 bản tin được xem nhiều</h3>
+                <div class="sidebar-news-list">
+                    <c:forEach var="hot" items="${applicationScope.hotNews}">
+                        <div class="sidebar-news-item">
+                            <a href="${pageContext.request.contextPath}/news/detail/${hot.id}" class="sidebar-news-link">
+                                <div class="sidebar-news-thumb">
+                                    <img src="${pageContext.request.contextPath}/ASM/assets/images/${hot.image}" 
+                                         alt="${hot.title}"
+                                         onerror="this.src='https://placehold.co/60x60'">
+                                </div>
+                                <div class="sidebar-news-content">
+                                    <h4 class="sidebar-news-title">${hot.title}</h4>
+                                </div>
+                            </a>
+                        </div>
+                    </c:forEach>
                 </div>
+            </div>
 
-                <!-- 5 bản tin mới nhất -->
-                <div class="sidebar-box latest-news">
-                    <h3>5 bản tin mới nhất</h3>
-                    <ul>
-                        <c:forEach var="latest" items="${applicationScope.latestNews}">
-                            <li>
-                                <a href="${pageContext.request.contextPath}/news/detail/${latest.id}">
-                                    ${latest.title}
-                                </a>
-                            </li>
-                        </c:forEach>
-                    </ul>
-                </div>            <!-- 5 bản tin đã xem -->
-            <div class="sidebar-box viewed-news">
-                <h3>5 bản tin bạn đã xem</h3>
-                <ul>
-                    <li><a href="#">Tin tức đã xem 1</a></li>
-                    <li><a href="#">Tin tức đã xem 2</a></li>
-                    <li><a href="#">Tin tức đã xem 3</a></li>
-                    <li><a href="#">Tin tức đã xem 4</a></li>
-                    <li><a href="#">Tin tức đã xem 5</a></li>
-                </ul>
+            <!-- 5 bản tin mới nhất -->
+            <div class="sidebar-box latest-news">
+                <h3>5 bản tin mới nhất</h3>
+                <div class="sidebar-news-list">
+                    <c:forEach var="latest" items="${applicationScope.latestNews}">
+                        <div class="sidebar-news-item">
+                            <a href="${pageContext.request.contextPath}/news/detail/${latest.id}" class="sidebar-news-link">
+                                <div class="sidebar-news-thumb">
+                                    <img src="${pageContext.request.contextPath}/ASM/assets/images/${latest.image}" 
+                                         alt="${latest.title}"
+                                         onerror="this.src='https://placehold.co/60x60'">
+                                </div>
+                                <div class="sidebar-news-content">
+                                    <h4 class="sidebar-news-title">${latest.title}</h4>
+                                </div>
+                            </a>
+                        </div>
+                    </c:forEach>
+                </div>
             </div>
 
             <!-- Newsletter -->
-            <div class="newsletter-box">
+            <div class="sidebar-box newsletter-box">
                 <h3>Đăng ký nhận bản tin</h3>
-                <form action="../newsletter" method="post">
+                <form action="${pageContext.request.contextPath}/newsletter" method="post">
                     <input type="email" name="email" placeholder="Nhập email của bạn" required>
                     <button type="submit">Đăng ký</button>
                 </form>
@@ -109,6 +132,8 @@
     </div>
 
     <!-- Footer -->
-    <jsp:include page="/ASM/layout/footer.jsp"/>
+    <footer class="footer">
+        <jsp:include page="/ASM/layout/footer.jsp"/>
+    </footer>
 </body>
 </html>

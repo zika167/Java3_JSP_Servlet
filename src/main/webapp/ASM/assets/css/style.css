@@ -9,12 +9,6 @@ body {
     margin: auto;
     padding: 20px;
 }
-header, footer {
-    background: #007BFF;
-    color: white;
-    padding: 15px;
-    text-align: center;
-}
 nav a {
     margin: 0 15px;
     color: white;

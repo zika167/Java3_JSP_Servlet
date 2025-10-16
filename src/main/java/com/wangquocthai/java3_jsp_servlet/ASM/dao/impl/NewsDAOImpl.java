@@ -11,6 +11,44 @@ import java.util.Date;
 import java.util.List;
 
 public class NewsDAOImpl implements NewsDAO {
+    
+    @Override
+    public List<News> findWithPagination(int pageNumber, int pageSize) throws Exception {
+        // Oracle-specific pagination using ROWNUM
+        String sql = "SELECT * FROM (SELECT a.*, ROWNUM rnum FROM (SELECT * FROM JV3_NEWS ORDER BY POSTEDDATE DESC) a WHERE ROWNUM <= ?) WHERE rnum > ?";
+        int maxRows = pageNumber * pageSize;
+        int minRows = (pageNumber - 1) * pageSize;
+        
+        List<News> list = new ArrayList<>();
+        ResultSet rs = Jdbc.executeQuery(sql, maxRows, minRows);
+        while (rs.next()) {
+            News news = new News();
+            news.setId(rs.getString("ID"));
+            news.setTitle(rs.getString("TITLE"));
+            news.setContent(rs.getString("CONTENT"));
+            news.setImage(rs.getString("IMAGE"));
+            
+            Timestamp ts = rs.getTimestamp("POSTEDDATE");
+            news.setPostedDate(ts != null ? new Date(ts.getTime()) : null);
+            
+            news.setAuthor(rs.getString("AUTHOR"));
+            news.setViewCount(rs.getInt("VIEWCOUNT"));
+            news.setCategoryId(rs.getString("CATEGORYID"));
+            news.setHome(String.valueOf(rs.getInt("HOME")));
+            list.add(news);
+        }
+        return list;
+    }
+
+    @Override
+    public int countTotalNews() throws Exception {
+        String sql = "SELECT COUNT(*) AS total FROM JV3_NEWS";
+        ResultSet rs = Jdbc.executeQuery(sql);
+        if (rs.next()) {
+            return rs.getInt("total");
+        }
+        return 0;
+    }
 
     @Override
     public int insert(News news) throws Exception {

@@ -9,4 +9,6 @@ public interface NewsDAO {
     int deleteById(String id) throws Exception;
     List<News> findAll() throws Exception;
     News findById(String id) throws Exception;
+    List<News> findWithPagination(int pageNumber, int pageSize) throws Exception;
+    int countTotalNews() throws Exception;
 }
