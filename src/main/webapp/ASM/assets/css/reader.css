@@ -1,5 +1,16 @@
 /* CSS cho giao diện Reader (Độc giả) */
 
+/* Text truncation styles */
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Số dòng hiển thị trước khi cắt */
+    -webkit-box-orient: vertical;
+    line-height: 1.5em;
+    max-height: 4.5em; /* line-height × số dòng */
+}
+
 /* Reset và base styles */
 * {
     margin: 0;

@@ -35,8 +35,8 @@ public class CategoryDAOImpl implements CategoryDAO {
         List<Category> list = new ArrayList<>();
         while (rs.next()) {
             Category c = new Category();
-            c.setId(rs.getString("id"));
-            c.setName(rs.getString("name"));
+            c.setId(rs.getString("ID"));
+            c.setName(rs.getString("NAME"));
             list.add(c);
         }
         rs.getStatement().getConnection().close();

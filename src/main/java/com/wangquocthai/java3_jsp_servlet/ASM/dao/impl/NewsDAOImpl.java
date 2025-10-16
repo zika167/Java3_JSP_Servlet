@@ -60,16 +60,16 @@ public class NewsDAOImpl implements NewsDAO {
         List<News> list = new ArrayList<>();
         while (rs.next()) {
             News n = new News();
-            n.setId(rs.getString("id"));
-            n.setTitle(rs.getString("title"));
-            n.setContent(rs.getString("content"));
-            n.setImage(rs.getString("image"));
-            Timestamp ts = rs.getTimestamp("posted_date");
+            n.setId(rs.getString("ID"));
+            n.setTitle(rs.getString("TITLE"));
+            n.setContent(rs.getString("CONTENT"));
+            n.setImage(rs.getString("IMAGE"));
+            Timestamp ts = rs.getTimestamp("POSTEDDATE");
             if (ts != null) n.setPostedDate(new Date(ts.getTime()));
-            n.setAuthor(rs.getString("author"));
-            n.setViewCount(rs.getInt("view_count"));
-            n.setCategoryId(rs.getString("category_id"));
-            n.setHome(rs.getString("home"));
+            n.setAuthor(rs.getString("AUTHOR"));
+            n.setViewCount(rs.getInt("VIEWCOUNT"));
+            n.setCategoryId(rs.getString("CATEGORYID"));
+            n.setHome(rs.getString("HOME"));
             list.add(n);
         }
         rs.getStatement().getConnection().close();
@@ -82,16 +82,16 @@ public class NewsDAOImpl implements NewsDAO {
         ResultSet rs = Jdbc.executeQuery(sql, id);
         if (rs.next()) {
             News n = new News();
-            n.setId(rs.getString("id"));
-            n.setTitle(rs.getString("title"));
-            n.setContent(rs.getString("content"));
-            n.setImage(rs.getString("image"));
-            Timestamp ts = rs.getTimestamp("posted_date");
+            n.setId(rs.getString("ID"));
+            n.setTitle(rs.getString("TITLE"));
+            n.setContent(rs.getString("CONTENT"));
+            n.setImage(rs.getString("IMAGE"));
+            Timestamp ts = rs.getTimestamp("POSTEDDATE");
             if (ts != null) n.setPostedDate(new Date(ts.getTime()));
-            n.setAuthor(rs.getString("author"));
-            n.setViewCount(rs.getInt("view_count"));
-            n.setCategoryId(rs.getString("category_id"));
-            n.setHome(rs.getString("home"));
+            n.setAuthor(rs.getString("AUTHOR"));
+            n.setViewCount(rs.getInt("VIEWCOUNT"));
+            n.setCategoryId(rs.getString("CATEGORYID"));
+            n.setHome(rs.getString("HOME"));
             rs.getStatement().getConnection().close();
             return n;
         }

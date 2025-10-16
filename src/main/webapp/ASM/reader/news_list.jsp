@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ taglib uri="jakarta.tags.core" prefix="c" %>
-<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <html>
 <head>
     <title>ABC News - Danh sách tin tức</title>
@@ -36,21 +36,21 @@
             
             <!-- Danh sách bài viết -->
             <div class="articles-list">
-                <c:forEach var="newsList" items="${newsList}">
+                <c:forEach var="news" items="${newsList}">
                     <div class="article-item">
                         <div class="article-image">
-                            <img src="/ASM/assets/images/${newsList.image}" alt="${newsList.title}">
+                            <img src="${pageContext.request.contextPath}/ASM/assets/images/${news.image}" alt="${news.title}">
                         </div>
                         <div class="article-content">
-                            <h3 class="article-title">${newsList.title}</h3>
-                            <p class="article-summary">${newsList.content}</p>
+                            <h3 class="article-title">${news.title}</h3>
+                            <p class="article-summary">${news.content}</p>
                             <div class="article-meta">
-                                <span class="article-author">Tác giả: ${newsList.author}</span>
+                                <span class="article-author">Tác giả: ${news.author}</span>
                                 <span class="article-date">
-                                    Ngày đăng: <fmt:formatDate value="${newsList.postedDate}" pattern="dd/MM/yyyy"/>
+                                    Ngày đăng: <fmt:formatDate value="${news.postedDate}" pattern="dd/MM/yyyy"/>
                                 </span>
                             </div>
-                            <a href="news_detail.jsp?id=${newsList.id}" class="btn-detail">Xem chi tiết</a>
+                            <a href="${pageContext.request.contextPath}/news/detail/${news.id}" class="btn-detail">Xem chi tiết</a>
                         </div>
                     </div>
                 </c:forEach>
@@ -60,30 +60,32 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <!-- 5 bản tin được xem nhiều -->
-            <div class="sidebar-box hot-news">
-                <h3>5 bản tin được xem nhiều</h3>
-                <ul>
-                    <li><a href="ASM/reader/news_detail.jsp">Công nghệ AI đang thay đổi thế giới</a></li>
-                    <li><a href="reader/news_detail.jsp">Kinh tế Việt Nam tăng trưởng mạnh</a></li>
-                    <li><a href="reader/news_detail.jsp">Giáo dục đại học: Xu hướng mới</a></li>
-                    <li><a href="reader/news_detail.jsp">Thể thao: Việt Nam giành huy chương vàng</a></li>
-                    <li><a href="reader/news_detail.jsp">Môi trường: Bảo vệ rừng Amazon</a></li>
-                </ul>
-            </div>
+                <div class="sidebar-box hot-news">
+                    <h3>5 bản tin được xem nhiều</h3>
+                    <ul>
+                        <c:forEach var="hot" items="${applicationScope.hotNews}">
+                            <li>
+                                <a href="${pageContext.request.contextPath}/news/detail/${hot.id}">
+                                    ${hot.title}
+                                </a>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </div>
 
-            <!-- 5 bản tin mới nhất -->
-            <div class="sidebar-box latest-news">
-                <h3>5 bản tin mới nhất</h3>
-                <ul>
-                    <li><a href="#">Tin tức mới nhất 1</a></li>
-                    <li><a href="#">Tin tức mới nhất 2</a></li>
-                    <li><a href="#">Tin tức mới nhất 3</a></li>
-                    <li><a href="#">Tin tức mới nhất 4</a></li>
-                    <li><a href="#">Tin tức mới nhất 5</a></li>
-                </ul>
-            </div>
-
-            <!-- 5 bản tin đã xem -->
+                <!-- 5 bản tin mới nhất -->
+                <div class="sidebar-box latest-news">
+                    <h3>5 bản tin mới nhất</h3>
+                    <ul>
+                        <c:forEach var="latest" items="${applicationScope.latestNews}">
+                            <li>
+                                <a href="${pageContext.request.contextPath}/news/detail/${latest.id}">
+                                    ${latest.title}
+                                </a>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </div>            <!-- 5 bản tin đã xem -->
             <div class="sidebar-box viewed-news">
                 <h3>5 bản tin bạn đã xem</h3>
                 <ul>

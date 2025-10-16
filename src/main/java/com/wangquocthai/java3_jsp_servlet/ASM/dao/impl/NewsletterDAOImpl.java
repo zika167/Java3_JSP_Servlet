@@ -12,31 +12,32 @@ public class NewsletterDAOImpl implements NewsletterDAO {
 
     @Override
     public int insert(Newsletter newsletter) throws Exception {
-        String sql = "INSERT INTO Newsletter(email, enabled) VALUES(?,?)";
-        return Jdbc.executeUpdate(sql, newsletter.getEmail(), newsletter.isEnabled() ? 1 : 0);
+        String sql = "INSERT INTO JV3_NEWSLETTERS(EMAIL, ENABLED) VALUES(?,?)";
+        return Jdbc.executeUpdate(sql, newsletter.getEmail(), newsletter.isEnabled() ? "Y" : "N");
     }
 
     @Override
     public int update(Newsletter newsletter) throws Exception {
-        String sql = "UPDATE Newsletter SET enabled=? WHERE email=?";
-        return Jdbc.executeUpdate(sql, newsletter.isEnabled() ? 1 : 0, newsletter.getEmail());
+        String sql = "UPDATE JV3_NEWSLETTERS SET ENABLED=? WHERE EMAIL=?";
+        return Jdbc.executeUpdate(sql, newsletter.isEnabled() ? "Y" : "N", newsletter.getEmail());
     }
 
     @Override
     public int deleteById(String email) throws Exception {
-        String sql = "DELETE FROM Newsletter WHERE email=?";
+        String sql = "DELETE FROM JV3_NEWSLETTERS WHERE EMAIL=?";
         return Jdbc.executeUpdate(sql, email);
     }
 
     @Override
     public List<Newsletter> findAll() throws Exception {
-        String sql = "SELECT email, enabled FROM Newsletter";
+        String sql = "SELECT EMAIL, ENABLED FROM JV3_NEWSLETTERS";
         ResultSet rs = Jdbc.executeQuery(sql);
         List<Newsletter> list = new ArrayList<>();
         while (rs.next()) {
             Newsletter n = new Newsletter();
-            n.setEmail(rs.getString("email"));
-            n.setEnabled(rs.getInt("enabled") == 1);
+            n.setEmail(rs.getString("EMAIL"));
+            String v = rs.getString("ENABLED");
+            n.setEnabled(v != null && (v.equalsIgnoreCase("Y") || v.equals("1")));
             list.add(n);
         }
         rs.getStatement().getConnection().close();
@@ -45,12 +46,13 @@ public class NewsletterDAOImpl implements NewsletterDAO {
 
     @Override
     public Newsletter findById(String email) throws Exception {
-        String sql = "SELECT email, enabled FROM Newsletter WHERE email=?";
+        String sql = "SELECT EMAIL, ENABLED FROM JV3_NEWSLETTERS WHERE EMAIL=?";
         ResultSet rs = Jdbc.executeQuery(sql, email);
         if (rs.next()) {
             Newsletter n = new Newsletter();
-            n.setEmail(rs.getString("email"));
-            n.setEnabled(rs.getInt("enabled") == 1);
+            n.setEmail(rs.getString("EMAIL"));
+            String v = rs.getString("ENABLED");
+            n.setEnabled(v != null && (v.equalsIgnoreCase("Y") || v.equals("1")));
             rs.getStatement().getConnection().close();
             return n;
         }

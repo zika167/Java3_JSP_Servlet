@@ -53,30 +53,32 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <!-- 5 bản tin được xem nhiều -->
-            <div class="sidebar-box hot-news">
-                <h3>5 bản tin được xem nhiều</h3>
-                <ul>
-                    <li><a href="reader/news_detail.jsp">Công nghệ AI đang thay đổi thế giới</a></li>
-                    <li><a href="reader/news_detail.jsp">Kinh tế Việt Nam tăng trưởng mạnh</a></li>
-                    <li><a href="reader/news_detail.jsp">Giáo dục đại học: Xu hướng mới</a></li>
-                    <li><a href="reader/news_detail.jsp">Thể thao: Việt Nam giành huy chương vàng</a></li>
-                    <li><a href="reader/news_detail.jsp">Môi trường: Bảo vệ rừng Amazon</a></li>
-                </ul>
-            </div>
+                <div class="sidebar-box hot-news">
+                    <h3>5 bản tin được xem nhiều</h3>
+                    <ul>
+                        <c:forEach var="hot" items="${applicationScope.hotNews}">
+                            <li>
+                                <a href="${pageContext.request.contextPath}/news/detail/${hot.id}">
+                                    ${hot.title}
+                                </a>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </div>
 
-            <!-- 5 bản tin mới nhất -->
-            <div class="sidebar-box latest-news">
-                <h3>5 bản tin mới nhất</h3>
-                <ul>
-                    <li><a href="reader/news_detail.jsp">Tin tức mới nhất 1</a></li>
-                    <li><a href="reader/news_detail.jsp">Tin tức mới nhất 2</a></li>
-                    <li><a href="reader/news_detail.jsp">Tin tức mới nhất 3</a></li>
-                    <li><a href="reader/news_detail.jsp">Tin tức mới nhất 4</a></li>
-                    <li><a href="reader/news_detail.jsp">Tin tức mới nhất 5</a></li>
-                </ul>
-            </div>
-
-            <!-- Newsletter -->
+                <!-- 5 bản tin mới nhất -->
+                <div class="sidebar-box latest-news">
+                    <h3>5 bản tin mới nhất</h3>
+                    <ul>
+                        <c:forEach var="latest" items="${applicationScope.latestNews}">
+                            <li>
+                                <a href="${pageContext.request.contextPath}/news/detail/${latest.id}">
+                                    ${latest.title}
+                                </a>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </div>            <!-- Newsletter -->
             <div class="newsletter-box">
                 <h3>Đăng ký nhận bản tin</h3>
                 <form action="#" method="post">
