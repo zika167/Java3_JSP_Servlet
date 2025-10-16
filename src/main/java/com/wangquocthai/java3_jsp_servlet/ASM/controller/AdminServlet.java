@@ -1,5 +1,9 @@
 package com.wangquocthai.java3_jsp_servlet.ASM.controller;
 
+import com.wangquocthai.java3_jsp_servlet.ASM.dao.UserDAO;
+import com.wangquocthai.java3_jsp_servlet.ASM.dao.NewsletterDAO;
+import com.wangquocthai.java3_jsp_servlet.ASM.dao.impl.UserDAOImpl;
+import com.wangquocthai.java3_jsp_servlet.ASM.dao.impl.NewsletterDAOImpl;
 import com.wangquocthai.java3_jsp_servlet.ASM.model.User;
 import com.wangquocthai.java3_jsp_servlet.ASM.model.Newsletter;
 import jakarta.servlet.ServletException;
@@ -9,8 +13,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,13 +25,17 @@ public class AdminServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
-        // Mock data - danh sách 5 user mẫu
-        List<User> users = createMockUsers();
-        List<Newsletter> newsletters = createMockNewsletters();
-        
-        // Truyền dữ liệu sang JSP
-        request.setAttribute("users", users);
-        request.setAttribute("newsletters", newsletters);
+        try {
+            UserDAO userDAO = new UserDAOImpl();
+            NewsletterDAO newsletterDAO = new NewsletterDAOImpl();
+            List<User> users = userDAO.findAll();
+            List<Newsletter> newsletters = newsletterDAO.findAll();
+
+            request.setAttribute("users", users);
+            request.setAttribute("newsletters", newsletters);
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
         
         // Forward đến JSP
         request.getRequestDispatcher("/ASM/admin/user_crud.jsp").forward(request, response);
@@ -48,11 +54,26 @@ public class AdminServlet extends HttpServlet {
             String email = request.getParameter("email");
             String role = request.getParameter("role");
             String fullName = request.getParameter("fullName");
-            
+
+            // Server-side validation using Validation helper
+            com.wangquocthai.java3_jsp_servlet.ASM.utils.Validation v = new com.wangquocthai.java3_jsp_servlet.ASM.utils.Validation();
+            v.required("username", username, "Username is required");
+            v.required("email", email, "Email is required");
+            if (v.hasErrors()) {
+                request.setAttribute("errors", v.getErrors());
+                request.setAttribute("form", java.util.Map.of(
+                        "username", username == null ? "" : username,
+                        "email", email == null ? "" : email,
+                        "role", role == null ? "" : role,
+                        "fullName", fullName == null ? "" : fullName
+                ));
+                request.getRequestDispatcher("/ASM/admin/user_crud.jsp").forward(request, response);
+                return;
+            }
+
             // Xử lý logic thêm user (mock)
-            // Trong thực tế sẽ lưu vào database
             System.out.println("Adding user: " + username + " - " + role);
-            
+
             // Redirect về trang danh sách
             response.sendRedirect(request.getContextPath() + "/admin");
             return;
@@ -73,87 +94,5 @@ public class AdminServlet extends HttpServlet {
         doGet(request, response);
     }
     
-    /**
-     * Tạo dữ liệu mẫu cho danh sách user
-     */
-    private List<User> createMockUsers() {
-        List<User> users = new ArrayList<>();
-        
-        users.add(new User(
-            "ADMIN001",
-            "admin123",
-            "Nguyễn Văn Admin",
-            new Date(1990, 5, 15),
-            "M",  // Nam
-            "0901234567",
-            "admin01@abcnews.com",
-            "A",   // Admin
-                true
-        ));
-        
-        users.add(new User(
-            "REP001",
-            "reporter123",
-            "Trần Thị Phóng viên",
-            new Date(1985, 8, 20),
-            "F", // Nữ
-            "0901234568",
-            "reporter01@abcnews.com",
-            "R",  // Reporter
-                true
-        ));
-        
-        users.add(new User(
-            "REP002",
-            "reporter456",
-            "Lê Văn Biên tập",
-            new Date(1988, 3, 10),
-            "M",  // Nam
-            "0901234569",
-            "reporter02@abcnews.com",
-            "R",  // Reporter
-                true
-        ));
-        
-        users.add(new User(
-            "REP003",
-            "reporter789",
-            "Phạm Thị Cộng tác viên",
-            new Date(1992, 11, 25),
-            "F", // Nữ
-            "0901234570",
-            "reporter03@abcnews.com",
-            "R",  // Reporter
-                true
-        ));
-        
-        users.add(new User(
-            "REP004",
-            "reporter000",
-            "Hoàng Văn Thực tập",
-            new Date(1995, 7, 5),
-            "M",  // Nam
-            "0901234571",
-            "reporter04@abcnews.com",
-            "R",  // Reporter
-                true
-        ));
-        
-        return users;
-    }
-    
-    /**
-     * Tạo dữ liệu mẫu cho danh sách newsletter
-     */
-    private List<Newsletter> createMockNewsletters() {
-        List<Newsletter> newsletters = new ArrayList<>();
-        
-        newsletters.add(new Newsletter("user1@gmail.com", true));
-        newsletters.add(new Newsletter("user2@yahoo.com", true));
-        newsletters.add(new Newsletter("user3@hotmail.com", false));
-        newsletters.add(new Newsletter("user4@gmail.com", true));
-        newsletters.add(new Newsletter("user5@outlook.com", true));
-        
-        return newsletters;
-    }
+    // Mock data removed - data is loaded from database via DAO
 }

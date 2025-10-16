@@ -327,3 +327,14 @@ body {
     }
 }
 
+/* Validation error style */
+.error {
+    color: #c82333;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+}
+

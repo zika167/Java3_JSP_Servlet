@@ -37,28 +37,34 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="username">Tên đăng nhập:</label>
-                            <input type="text" id="username" name="username" required>
+                            <input type="text" id="username" name="username" required value="${form.username}">
+                            <c:if test="${not empty errors.username}">
+                                <div class="error">${errors.username}</div>
+                            </c:if>
                         </div>
                         
                         <div class="form-group">
                             <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" required>
+                            <input type="email" id="email" name="email" required value="${form.email}">
+                            <c:if test="${not empty errors.email}">
+                                <div class="error">${errors.email}</div>
+                            </c:if>
                         </div>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
                             <label for="fullName">Họ và tên:</label>
-                            <input type="text" id="fullName" name="fullName" required>
+                            <input type="text" id="fullName" name="fullName" required value="${form.fullName}">
                         </div>
                         
                         <div class="form-group">
                             <label for="role">Vai trò:</label>
                             <select id="role" name="role" required>
                                 <option value="">Chọn vai trò</option>
-                                <option value="Admin">Admin</option>
-                                <option value="Reporter">Reporter</option>
-                                <option value="Reader">Reader</option>
+                                <option value="Admin"><c:if test="${form.role == 'Admin'}">selected</c:if>Admin</option>
+                                <option value="Reporter"><c:if test="${form.role == 'Reporter'}">selected</c:if>Reporter</option>
+                                <option value="Reader"><c:if test="${form.role == 'Reader'}">selected</c:if>Reader</option>
                             </select>
                         </div>
                     </div>
@@ -104,13 +110,13 @@
                                     <td class="actions">
                                         <c:choose>
                                             <c:when test="${user.active}">
-                                                <button class="btn btn-sm btn-lock" onclick="lockUser(${user.id})">Khóa</button>
+                                                <button class="btn btn-sm btn-lock" onclick="lockUser('${user.id}')">Khóa</button>
                                             </c:when>
                                             <c:otherwise>
-                                                <button class="btn btn-sm btn-unlock" onclick="unlockUser(${user.id})">Mở khóa</button>
+                                                <button class="btn btn-sm btn-unlock" onclick="unlockUser('${user.id}')">Mở khóa</button>
                                             </c:otherwise>
                                         </c:choose>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteUser(${user.id})">Xóa</button>
+                                        <button class="btn btn-sm btn-delete" onclick="deleteUser('${user.id}')">Xóa</button>
                                     </td>
                                 </tr>
                             </c:forEach>

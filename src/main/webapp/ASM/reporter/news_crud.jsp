@@ -35,34 +35,40 @@
                     
                     <div class="form-group">
                         <label for="title">Tiêu đề:</label>
-                        <input type="text" id="title" name="title" required>
+                        <input type="text" id="title" name="title" required value="${form.title}">
+                        <c:if test="${not empty errors.title}">
+                            <div class="error">${errors.title}</div>
+                        </c:if>
                     </div>
                     
                     <div class="form-group">
                         <label for="content">Nội dung:</label>
-                        <textarea id="content" name="content" rows="10" required></textarea>
+                        <textarea id="content" name="content" rows="10" required>${form.content}</textarea>
                     </div>
                     
                     <div class="form-group">
                         <label for="image">Ảnh minh họa:</label>
-                        <input type="text" id="image" name="image" placeholder="Tên file ảnh">
+                        <input type="text" id="image" name="image" placeholder="Tên file ảnh" value="${form.image}">
                     </div>
                     
                     <div class="form-group">
                         <label for="category">Danh mục:</label>
                         <select id="category" name="category" required>
                             <option value="">Chọn danh mục</option>
-                            <option value="Công nghệ">Công nghệ</option>
-                            <option value="Kinh tế">Kinh tế</option>
-                            <option value="Giáo dục">Giáo dục</option>
-                            <option value="Thể thao">Thể thao</option>
-                            <option value="Môi trường">Môi trường</option>
-                            <option value="Xã hội">Xã hội</option>
-                            <option value="Ẩm thực">Ẩm thực</option>
-                            <option value="Giao thông">Giao thông</option>
-                            <option value="Văn hóa">Văn hóa</option>
-                            <option value="Kinh doanh">Kinh doanh</option>
+                            <option value="Công nghệ" <c:if test="${form.category == 'Công nghệ'}">selected</c:if>>Công nghệ</option>
+                            <option value="Kinh tế" <c:if test="${form.category == 'Kinh tế'}">selected</c:if>>Kinh tế</option>
+                            <option value="Giáo dục" <c:if test="${form.category == 'Giáo dục'}">selected</c:if>>Giáo dục</option>
+                            <option value="Thể thao" <c:if test="${form.category == 'Thể thao'}">selected</c:if>>Thể thao</option>
+                            <option value="Môi trường" <c:if test="${form.category == 'Môi trường'}">selected</c:if>>Môi trường</option>
+                            <option value="Xã hội" <c:if test="${form.category == 'Xã hội'}">selected</c:if>>Xã hội</option>
+                            <option value="Ẩm thực" <c:if test="${form.category == 'Ẩm thực'}">selected</c:if>>Ẩm thực</option>
+                            <option value="Giao thông" <c:if test="${form.category == 'Giao thông'}">selected</c:if>>Giao thông</option>
+                            <option value="Văn hóa" <c:if test="${form.category == 'Văn hóa'}">selected</c:if>>Văn hóa</option>
+                            <option value="Kinh doanh" <c:if test="${form.category == 'Kinh doanh'}">selected</c:if>>Kinh doanh</option>
                         </select>
+                        <c:if test="${not empty errors.category}">
+                            <div class="error">${errors.category}</div>
+                        </c:if>
                     </div>
                     
                     <div class="form-actions">
@@ -106,8 +112,8 @@
                                         </span>
                                     </td>
                                     <td class="actions">
-                                        <button class="btn btn-sm btn-edit" onclick="editArticle(${newsList.id})">Sửa</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteArticle(${newsList.id})">Xóa</button>
+                                        <button class="btn btn-sm btn-edit" onclick="editArticle('${newsList.id}')">Sửa</button>
+                                        <button class="btn btn-sm btn-delete" onclick="deleteArticle('${newsList.id}')">Xóa</button>
                                     </td>
                                 </tr>
                             </c:forEach>

@@ -19,6 +19,12 @@
                 <a href="#" class="nav-link">Thể thao</a>
                 <a href="#" class="nav-link">Công nghệ</a>
                 <a href="#" class="nav-link">Kinh tế</a>
+                <!-- Auth links for news_list context -->
+                <a href="${pageContext.request.contextPath}/auth/login" class="nav-link">Login</a>
+                <a href="${pageContext.request.contextPath}/auth/signup" class="nav-link">Sign up</a>
+                <!-- Language links -->
+                <a href="?lang=vi" class="nav-link">VI</a>
+                <a href="?lang=en" class="nav-link">EN</a>
             </nav>
         </div>
     </header>

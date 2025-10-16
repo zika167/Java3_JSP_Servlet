@@ -7,32 +7,4 @@
         <welcome-file>thai_homepage.jsp</welcome-file>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
-
-<!--    &lt;!&ndash; Servlet mappings for ASM &ndash;&gt;-->
-<!--    <servlet>-->
-<!--        <servlet-name>ReaderServlet</servlet-name>-->
-<!--        <servlet-class>com.wangquocthai.java3_jsp_servlet.ASM.controller.ReaderServlet</servlet-class>-->
-<!--    </servlet>-->
-<!--    <servlet-mapping>-->
-<!--        <servlet-name>ReaderServlet</servlet-name>-->
-<!--        <url-pattern>/reader</url-pattern>-->
-<!--    </servlet-mapping>-->
-
-<!--    <servlet>-->
-<!--        <servlet-name>ReporterServlet</servlet-name>-->
-<!--        <servlet-class>com.wangquocthai.java3_jsp_servlet.ASM.controller.ReporterServlet</servlet-class>-->
-<!--    </servlet>-->
-<!--    <servlet-mapping>-->
-<!--        <servlet-name>ReporterServlet</servlet-name>-->
-<!--        <url-pattern>/reporter</url-pattern>-->
-<!--    </servlet-mapping>-->
-
-<!--    <servlet>-->
-<!--        <servlet-name>AdminServlet</servlet-name>-->
-<!--        <servlet-class>com.wangquocthai.java3_jsp_servlet.ASM.controller.AdminServlet</servlet-class>-->
-<!--    </servlet>-->
-<!--    <servlet-mapping>-->
-<!--        <servlet-name>AdminServlet</servlet-name>-->
-<!--        <url-pattern>/admin</url-pattern>-->
-<!--    </servlet-mapping>-->
 </web-app>

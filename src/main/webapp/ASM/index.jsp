@@ -9,6 +9,7 @@
 </head>
 <body>
     <!-- Header -->
+    <% request.setAttribute("hideAuthButtons", true); %>
     <jsp:include page="/ASM/layout/header.jsp"/>
 
     <!-- Main Content -->
