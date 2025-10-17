@@ -101,37 +101,53 @@
         </div>
     </div>
 
-    <!-- Main Navigation -->
+<%--    <!-- Main Navigation Menu -->--%>
+<%--    <nav class="main-nav">--%>
+<%--        <div class="container">--%>
+<%--            <div class="nav-content">--%>
+<%--                <a href="/reader" class="nav-link">--%>
+<%--                    <i class="fas fa-home"></i> Trang chủ--%>
+<%--                </a>--%>
+<%--                <a href="${pageContext.request.contextPath}/category?id=1" class="nav-link">--%>
+<%--                    <i class="fas fa-robot"></i> Công nghệ--%>
+<%--                </a>--%>
+<%--                <a href="${pageContext.request.contextPath}/category?id=2" class="nav-link">--%>
+<%--                    <i class="fas fa-chart-line"></i> Kinh tế--%>
+<%--                </a>--%>
+<%--                <a href="${pageContext.request.contextPath}/category?id=3" class="nav-link">--%>
+<%--                    <i class="fas fa-graduation-cap"></i> Giáo dục--%>
+<%--                </a>--%>
+<%--                <a href="${pageContext.request.contextPath}/category?id=4" class="nav-link">--%>
+<%--                    <i class="fas fa-trophy"></i> Thể thao--%>
+<%--                </a>--%>
+<%--                <a href="${pageContext.request.contextPath}/category?id=5" class="nav-link">--%>
+<%--                    <i class="fas fa-leaf"></i> Môi trường--%>
+<%--                </a>--%>
+<%--                <a href="${pageContext.request.contextPath}/category?id=6" class="nav-link">--%>
+<%--                    <i class="fas fa-users"></i> Xã hội--%>
+<%--                </a>--%>
+<%--                <a href="${pageContext.request.contextPath}/category?id=7" class="nav-link">--%>
+<%--                    <i class="fas fa-palette"></i> Văn hóa--%>
+<%--                </a>--%>
+<%--                <a href="${pageContext.request.contextPath}/category?id=8" class="nav-link">--%>
+<%--                    <i class="fas fa-gavel"></i> Pháp luật--%>
+<%--                </a>--%>
+<%--            </div>--%>
+<%--        </div>--%>
+<%--    </nav>--%>
+
     <nav class="main-nav">
         <div class="container">
             <div class="nav-content">
-                <a href="/ASM/index.jsp" class="nav-link">
+                <a href="${pageContext.request.contextPath}/reader" class="nav-link">
                     <i class="fas fa-home"></i> Trang chủ
                 </a>
-                <a href="#" class="nav-link">
-                    <i class="fas fa-robot"></i> Công nghệ
-                </a>
-                <a href="#" class="nav-link">
-                    <i class="fas fa-chart-line"></i> Kinh tế
-                </a>
-                <a href="#" class="nav-link">
-                    <i class="fas fa-graduation-cap"></i> Giáo dục
-                </a>
-                <a href="#" class="nav-link">
-                    <i class="fas fa-trophy"></i> Thể thao
-                </a>
-                <a href="#" class="nav-link">
-                    <i class="fas fa-leaf"></i> Môi trường
-                </a>
-                <a href="#" class="nav-link">
-                    <i class="fas fa-users"></i> Xã hội
-                </a>
-                <a href="#" class="nav-link">
-                    <i class="fas fa-palette"></i> Văn hóa
-                </a>
-                <a href="#" class="nav-link">
-                    <i class="fas fa-gavel"></i> Pháp luật
-                </a>
+
+                <c:forEach var="category" items="${categories}">
+                    <a href="${pageContext.request.contextPath}/category?id=${category.id}" class="nav-link">
+                        <i class="fas fa-tag"></i> ${category.name}
+                    </a>
+                </c:forEach>
             </div>
         </div>
     </nav>
@@ -176,3 +192,22 @@
         });
     </script>
 </header>
+
+<!-- Favicon and Meta Tags -->
+<link rel="apple-touch-icon" sizes="57x57" href="${pageContext.request.contextPath}/assets/favicon/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="${pageContext.request.contextPath}/assets/favicon/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="${pageContext.request.contextPath}/assets/favicon/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="${pageContext.request.contextPath}/assets/favicon/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="${pageContext.request.contextPath}/assets/favicon/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="${pageContext.request.contextPath}/assets/favicon/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="${pageContext.request.contextPath}/assets/favicon/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="${pageContext.request.contextPath}/assets/favicon/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="${pageContext.request.contextPath}/assets/favicon/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="${pageContext.request.contextPath}/assets/favicon/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="${pageContext.request.contextPath}/assets/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="${pageContext.request.contextPath}/assets/favicon/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="${pageContext.request.contextPath}/assets/favicon/favicon-16x16.png">
+<link rel="manifest" href="${pageContext.request.contextPath}/assets/favicon/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="${pageContext.request.contextPath}/assets/favicon/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">

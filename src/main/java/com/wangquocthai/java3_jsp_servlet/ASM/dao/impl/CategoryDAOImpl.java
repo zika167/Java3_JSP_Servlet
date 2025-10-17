@@ -39,7 +39,6 @@ public class CategoryDAOImpl implements CategoryDAO {
             c.setName(rs.getString("NAME"));
             list.add(c);
         }
-        rs.getStatement().getConnection().close();
         return list;
     }
 

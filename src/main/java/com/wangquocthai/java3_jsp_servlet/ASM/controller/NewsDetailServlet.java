@@ -1,9 +1,9 @@
 package com.wangquocthai.java3_jsp_servlet.ASM.controller;
 
 import com.wangquocthai.java3_jsp_servlet.ASM.dao.NewsDAO;
-import com.wangquocthai.java3_jsp_servlet.ASM.dao.CategoryDAO;
+// import com.wangquocthai.java3_jsp_servlet.ASM.dao.CategoryDAO;
 import com.wangquocthai.java3_jsp_servlet.ASM.dao.impl.NewsDAOImpl;
-import com.wangquocthai.java3_jsp_servlet.ASM.dao.impl.CategoryDAOImpl;
+// import com.wangquocthai.java3_jsp_servlet.ASM.dao.impl.CategoryDAOImpl;
 import com.wangquocthai.java3_jsp_servlet.ASM.model.News;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

@@ -52,13 +52,9 @@ public class NewsListServlet extends HttpServlet {
             req.setAttribute("currentPage", page);
             req.setAttribute("totalPages", totalPages);
 
-            // Forward to JSP
             req.getRequestDispatcher("/ASM/reader/news_list.jsp").forward(req, resp);
         } catch (Exception e) {
-            // Log the error
-            e.printStackTrace();
-            // Forward to error page or show error message
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while processing your request.");
+            throw new ServletException("Error fetching news list", e);
         }
     }
 }

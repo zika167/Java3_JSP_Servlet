@@ -14,28 +14,28 @@ public class NewsDAOImpl implements NewsDAO {
     
     @Override
     public List<News> findWithPagination(int pageNumber, int pageSize) throws Exception {
-        // Oracle-specific pagination using ROWNUM
-        String sql = "SELECT * FROM (SELECT a.*, ROWNUM rnum FROM (SELECT * FROM JV3_NEWS ORDER BY POSTEDDATE DESC) a WHERE ROWNUM <= ?) WHERE rnum > ?";
-        int maxRows = pageNumber * pageSize;
-        int minRows = (pageNumber - 1) * pageSize;
-        
+        String sql = "SELECT ID, TITLE, IMAGE, POSTEDDATE, AUTHOR, CATEGORYID, HOME " +
+                     "FROM JV3_NEWS " +
+                     "ORDER BY POSTEDDATE DESC " +
+                     "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        int offset = Math.max(0, (pageNumber - 1) * pageSize);
         List<News> list = new ArrayList<>();
-        ResultSet rs = Jdbc.executeQuery(sql, maxRows, minRows);
-        while (rs.next()) {
-            News news = new News();
-            news.setId(rs.getString("ID"));
-            news.setTitle(rs.getString("TITLE"));
-            news.setContent(rs.getString("CONTENT"));
-            news.setImage(rs.getString("IMAGE"));
-            
-            Timestamp ts = rs.getTimestamp("POSTEDDATE");
-            news.setPostedDate(ts != null ? new Date(ts.getTime()) : null);
-            
-            news.setAuthor(rs.getString("AUTHOR"));
-            news.setViewCount(rs.getInt("VIEWCOUNT"));
-            news.setCategoryId(rs.getString("CATEGORYID"));
-            news.setHome(String.valueOf(rs.getInt("HOME")));
-            list.add(news);
+        try (ResultSet rs = Jdbc.executeQuery(sql, offset, pageSize)) {
+            while (rs.next()) {
+                News news = new News();
+                news.setId(rs.getString("ID"));
+                news.setTitle(rs.getString("TITLE"));
+                news.setImage(rs.getString("IMAGE"));
+                
+                Timestamp ts = rs.getTimestamp("POSTEDDATE");
+                news.setPostedDate(ts != null ? new Date(ts.getTime()) : null);
+                
+                news.setAuthor(rs.getString("AUTHOR"));
+                news.setCategoryId(rs.getString("CATEGORYID"));
+                news.setHome(rs.getString("HOME"));
+                
+                list.add(news);
+            }
         }
         return list;
     }
@@ -135,5 +135,40 @@ public class NewsDAOImpl implements NewsDAO {
         }
         rs.getStatement().getConnection().close();
         return null;
+    }
+
+    @Override
+    public int countTotalNewsByCategory(String categoryId) throws Exception {
+        String sql = "SELECT COUNT(*) AS total FROM JV3_NEWS WHERE CATEGORYID = ?";
+        ResultSet rs = Jdbc.executeQuery(sql, categoryId);
+        if (rs.next()) {
+            return rs.getInt("total");
+        }
+        return 0;
+    }
+
+    @Override
+    public List<News> findByCategoryWithPagination(String categoryId, int pageNumber, int pageSize) throws Exception {
+        String sql = "SELECT ID, TITLE, IMAGE, POSTEDDATE, AUTHOR, CATEGORYID, HOME " +
+                     "FROM JV3_NEWS WHERE CATEGORYID = ? " +
+                     "ORDER BY POSTEDDATE DESC " +
+                     "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        int offset = Math.max(0, (pageNumber - 1) * pageSize);
+        List<News> list = new ArrayList<>();
+        try (ResultSet rs = Jdbc.executeQuery(sql, categoryId, offset, pageSize)) {
+            while (rs.next()) {
+                News news = new News();
+                news.setId(rs.getString("ID"));
+                news.setTitle(rs.getString("TITLE"));
+                news.setImage(rs.getString("IMAGE"));
+                Timestamp ts = rs.getTimestamp("POSTEDDATE");
+                news.setPostedDate(ts != null ? new Date(ts.getTime()) : null);
+                news.setAuthor(rs.getString("AUTHOR"));
+                news.setCategoryId(rs.getString("CATEGORYID"));
+                news.setHome(rs.getString("HOME"));
+                list.add(news);
+            }
+        }
+        return list;
     }
 }

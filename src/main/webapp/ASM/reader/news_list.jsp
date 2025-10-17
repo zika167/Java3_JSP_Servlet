@@ -10,14 +10,14 @@
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
+    <header>
         <jsp:include page="/ASM/layout/header.jsp"/>
     </header>
 
     <!-- Main Content -->
     <div class="main-container">
         <div class="content">
-            <h2>Danh sách tin tức</h2>
+            <h2 style="margin-bottom: 20px">Danh sách tin tức</h2>
             
             <!-- Danh sách bài viết -->
             <div class="articles-list">
@@ -26,15 +26,15 @@
                         <a href="${pageContext.request.contextPath}/news/detail/${news.id}" class="news-link">
                             <div class="news-image">
                                 <img src="${pageContext.request.contextPath}/ASM/assets/images/${news.image}" 
-                                     alt="${news.title}"
+                                     alt="<c:out value='${news.title}'/>"
                                      onerror="this.src='https://placehold.co/800x450'">
                             </div>
                             <div class="news-content">
-                                <h3 class="news-title">${news.title}</h3>
-                                <p class="news-summary text-truncate">${news.content}</p>
+                                <h3 class="news-title"><c:out value="${news.title}"/></h3>
+                                <p class="news-summary text-truncate"><c:out value="${news.content}"/></p>
                                 <div class="news-meta">
                                     <span class="news-author">
-                                        <i class="fas fa-user"></i> ${news.author}
+                                        <i class="fas fa-user"></i> <c:out value="${news.author}"/>
                                     </span>
                                     <span class="news-date">
                                         <i class="far fa-clock"></i>
@@ -51,25 +51,25 @@
             <div class="pagination">
                 <c:if test="${totalPages > 1}">
                     <div class="pagination-controls">
-                        <a href="?page=${currentPage - 1}" 
+                        <a href="?id=${categoryId}&page=${currentPage - 1}" 
                            class="page-link ${currentPage == 1 ? 'disabled' : ''}"
                            ${currentPage == 1 ? 'aria-disabled="true"' : ''}>
-                            <i class="fas fa-chevron-left"></i> Trang trước
+                            <i class="fas fa-chevron-left"> </i>  Trang trước
                         </a>
-                        
+
                         <div class="page-numbers">
                             <c:forEach begin="1" end="${totalPages}" var="pageNum">
-                                <a href="?page=${pageNum}" 
+                                <a href="?id=${categoryId}&page=${pageNum}" 
                                    class="page-number ${pageNum == currentPage ? 'active' : ''}">
                                     ${pageNum}
                                 </a>
                             </c:forEach>
                         </div>
-                        
-                        <a href="?page=${currentPage + 1}" 
+
+                        <a href="?id=${categoryId}&page=${currentPage + 1}" 
                            class="page-link ${currentPage == totalPages ? 'disabled' : ''}"
                            ${currentPage == totalPages ? 'aria-disabled="true"' : ''}>
-                            Trang sau <i class="fas fa-chevron-right"></i>
+                            Trang sau  <i class="fas fa-chevron-right"> </i>
                         </a>
                     </div>
                 </c:if>
@@ -132,7 +132,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer>
         <jsp:include page="/ASM/layout/footer.jsp"/>
     </footer>
 </body>
