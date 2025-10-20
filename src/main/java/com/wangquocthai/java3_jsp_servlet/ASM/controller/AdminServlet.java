@@ -1,11 +1,15 @@
 package com.wangquocthai.java3_jsp_servlet.ASM.controller;
 
+import com.wangquocthai.java3_jsp_servlet.ASM.dao.CategoryDAO;
 import com.wangquocthai.java3_jsp_servlet.ASM.dao.UserDAO;
 import com.wangquocthai.java3_jsp_servlet.ASM.dao.NewsletterDAO;
+import com.wangquocthai.java3_jsp_servlet.ASM.dao.impl.CategoryDAOImpl;
 import com.wangquocthai.java3_jsp_servlet.ASM.dao.impl.UserDAOImpl;
 import com.wangquocthai.java3_jsp_servlet.ASM.dao.impl.NewsletterDAOImpl;
+import com.wangquocthai.java3_jsp_servlet.ASM.model.Category;
 import com.wangquocthai.java3_jsp_servlet.ASM.model.User;
 import com.wangquocthai.java3_jsp_servlet.ASM.model.Newsletter;
+import com.wangquocthai.java3_jsp_servlet.ASM.utils.Validation;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -20,19 +24,29 @@ import java.util.List;
  */
 @WebServlet(name ="AdminServlet", value = "/admin")
 public class AdminServlet extends HttpServlet {
-    
+    private UserDAO userDAO;
+    private NewsletterDAO newsletterDAO;
+    private CategoryDAO categoryDAO;
+
+    @Override
+    public void init() throws ServletException {
+        userDAO = new UserDAOImpl();
+        newsletterDAO = new NewsletterDAOImpl();
+        categoryDAO = new CategoryDAOImpl(); // <-- THÊM DÒNG NÀY
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
         try {
-            UserDAO userDAO = new UserDAOImpl();
-            NewsletterDAO newsletterDAO = new NewsletterDAOImpl();
             List<User> users = userDAO.findAll();
             List<Newsletter> newsletters = newsletterDAO.findAll();
+            List<Category> categories = categoryDAO.findAll();
 
             request.setAttribute("users", users);
             request.setAttribute("newsletters", newsletters);
+            request.setAttribute("categories", categories);
         } catch (Exception e) {
             throw new ServletException(e);
         }
@@ -45,53 +59,177 @@ public class AdminServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
-        // Xử lý form thêm user
         String action = request.getParameter("action");
         
-        if ("add".equals(action)) {
-            // Lấy dữ liệu từ form
-            String username = request.getParameter("username");
-            String email = request.getParameter("email");
-            String role = request.getParameter("role");
-            String fullName = request.getParameter("fullName");
-
-            // Server-side validation using Validation helper
-            com.wangquocthai.java3_jsp_servlet.ASM.utils.Validation v = new com.wangquocthai.java3_jsp_servlet.ASM.utils.Validation();
-            v.required("username", username, "Username is required");
-            v.required("email", email, "Email is required");
-            if (v.hasErrors()) {
-                request.setAttribute("errors", v.getErrors());
+        try {
+            switch (action != null ? action : "") {
+                case "CREATE":
+                    handleCreate(request, response);
+                    break;
+                case "UPDATE":
+                    handleUpdate(request, response);
+                    break;
+                case "DELETE":
+                    handleDelete(request, response);
+                    break;
+                case "TOGGLE_STATUS":
+                    handleToggleStatus(request, response);
+                    break;
+                default:
+                    response.sendRedirect(request.getContextPath() + "/admin");
+            }
+        } catch (Exception e) {
+            request.setAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
+            doGet(request, response);
+        }
+    }
+    
+    private void handleCreate(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        
+        String id = request.getParameter("id");
+        String password = request.getParameter("password");
+        String fullname = request.getParameter("fullname");
+        String email = request.getParameter("email");
+        String role = request.getParameter("role");
+        
+        // Validation
+        Validation v = new Validation();
+        v.required("id", id, "Tên đăng nhập không được để trống");
+        v.required("password", password, "Mật khẩu không được để trống");
+        v.required("fullname", fullname, "Họ tên không được để trống");
+        v.required("email", email, "Email không được để trống");
+        v.required("role", role, "Vai trò không được để trống");
+        
+        if (v.hasErrors()) {
+            request.setAttribute("errors", v.getErrors());
+            request.setAttribute("form", java.util.Map.of(
+                "id", id == null ? "" : id,
+                "fullname", fullname == null ? "" : fullname,
+                "email", email == null ? "" : email,
+                "role", role == null ? "" : role
+            ));
+            doGet(request, response);
+            return;
+        }
+        
+        try {
+            // Check if user exists
+            User existingUser = userDAO.findById(id);
+            if (existingUser != null) {
+                request.setAttribute("error", "Tên đăng nhập đã tồn tại!");
                 request.setAttribute("form", java.util.Map.of(
-                        "username", username == null ? "" : username,
-                        "email", email == null ? "" : email,
-                        "role", role == null ? "" : role,
-                        "fullName", fullName == null ? "" : fullName
+                    "id", id,
+                    "fullname", fullname,
+                    "email", email,
+                    "role", role
                 ));
-                request.getRequestDispatcher("/ASM/admin/user_crud.jsp").forward(request, response);
+                doGet(request, response);
                 return;
             }
-
-            // Xử lý logic thêm user (mock)
-            System.out.println("Adding user: " + username + " - " + role);
-
-            // Redirect về trang danh sách
-            response.sendRedirect(request.getContextPath() + "/admin");
-            return;
-        }
-        
-        // Xử lý các action khác (khóa/xóa)
-        String userId = request.getParameter("userId");
-        if ("lock".equals(action) || "delete".equals(action)) {
-            // Xử lý logic khóa/xóa user (mock)
-            // Trong thực tế sẽ cập nhật database
-            System.out.println("Action: " + action + " on user: " + userId);
             
-            // Redirect về trang danh sách
+            // Create new user
+            User user = new User();
+            user.setId(id);
+            user.setPassword(password);
+            user.setFullname(fullname);
+            user.setEmail(email);
+            user.setRole(mapRoleToCode(role));
+            user.setActive(true);
+            user.setBirthday(new java.util.Date());
+            
+            userDAO.insert(user);
+            request.getSession().setAttribute("success", "Thêm người dùng thành công!");
             response.sendRedirect(request.getContextPath() + "/admin");
-            return;
+            
+        } catch (Exception e) {
+            request.setAttribute("error", "Lỗi khi thêm người dùng: " + e.getMessage());
+            doGet(request, response);
         }
+    }
+    
+    private void handleUpdate(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
         
-        doGet(request, response);
+        String id = request.getParameter("id");
+        String fullname = request.getParameter("fullname");
+        String email = request.getParameter("email");
+        String role = request.getParameter("role");
+        String password = request.getParameter("password");
+        
+        try {
+            User user = userDAO.findById(id);
+            if (user == null) {
+                request.setAttribute("error", "Không tìm thấy người dùng!");
+                doGet(request, response);
+                return;
+            }
+            
+            // Update fields
+            user.setFullname(fullname);
+            user.setEmail(email);
+            user.setRole(mapRoleToCode(role));
+            
+            // Only update password if provided
+            if (password != null && !password.trim().isEmpty()) {
+                user.setPassword(password);
+            }
+            
+            userDAO.update(user);
+            request.getSession().setAttribute("success", "Cập nhật người dùng thành công!");
+            response.sendRedirect(request.getContextPath() + "/admin");
+            
+        } catch (Exception e) {
+            request.setAttribute("error", "Lỗi khi cập nhật: " + e.getMessage());
+            doGet(request, response);
+        }
+    }
+    
+    private void handleDelete(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        
+        String id = request.getParameter("id");
+        
+        try {
+            userDAO.deleteById(id);
+            request.getSession().setAttribute("success", "Xóa người dùng thành công!");
+            response.sendRedirect(request.getContextPath() + "/admin");
+            
+        } catch (Exception e) {
+            request.setAttribute("error", "Lỗi khi xóa: " + e.getMessage());
+            doGet(request, response);
+        }
+    }
+    
+    private void handleToggleStatus(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        
+        String id = request.getParameter("id");
+        
+        try {
+            User user = userDAO.findById(id);
+            if (user != null) {
+                user.setActive(!user.isActive());
+                userDAO.update(user);
+                request.getSession().setAttribute("success", 
+                    user.isActive() ? "Đã mở khóa người dùng!" : "Đã khóa người dùng!");
+            }
+            response.sendRedirect(request.getContextPath() + "/admin");
+            
+        } catch (Exception e) {
+            request.setAttribute("error", "Lỗi khi thay đổi trạng thái: " + e.getMessage());
+            doGet(request, response);
+        }
+    }
+    
+    private String mapRoleToCode(String roleName) {
+        if (roleName == null) return "R";
+        switch (roleName.toLowerCase()) {
+            case "admin": return "A";
+            case "reporter": return "R";
+            case "reader": return "R";
+            default: return "R";
+        }
     }
     
     // Mock data removed - data is loaded from database via DAO

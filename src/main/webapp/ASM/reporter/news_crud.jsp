@@ -18,8 +18,8 @@
     <!-- Navigation -->
     <nav class="nav-menu">
         <div class="container">
-            <a href="/ASM/index.jsp" class="nav-link">Trang chủ</a>
-            <a href="#" class="nav-link active">Tin tức</a>
+            <a href="${pageContext.request.contextPath}/index.jsp" class="nav-link">Trang chủ</a>
+            <a href="${pageContext.request.contextPath}/reporter" class="nav-link active">Tin tức</a>
         </div>
     </nav>
 
@@ -29,51 +29,48 @@
             <!-- Form thêm/sửa bài viết -->
             <div class="form-section">
                 <h2>Thêm/Sửa bài viết</h2>
-                <form action="../reporter" method="post" class="article-form">
-                    <input type="hidden" name="action" value="add">
-                    <input type="hidden" name="id" value="">
-                    
+                <form id="articleForm" action="${pageContext.request.contextPath}/reporter" method="post" class="article-form">
+                    <input type="hidden" id="action" name="action" value="create">
+                    <input type="hidden" id="id" name="id" value="">
+
                     <div class="form-group">
                         <label for="title">Tiêu đề:</label>
-                        <input type="text" id="title" name="title" required value="${form.title}">
-                        <c:if test="${not empty errors.title}">
-                            <div class="error">${errors.title}</div>
-                        </c:if>
+                        <input type="text" id="title" name="title" required>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="content">Nội dung:</label>
-                        <textarea id="content" name="content" rows="10" required>${form.content}</textarea>
+                        <textarea id="content" name="content" rows="10" required></textarea>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="image">Ảnh minh họa:</label>
-                        <input type="text" id="image" name="image" placeholder="Tên file ảnh" value="${form.image}">
+                        <input type="text" id="image" name="image" placeholder="Tên file ảnh (ví dụ: image.jpg)">
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="category">Danh mục:</label>
-                        <select id="category" name="category" required>
-                            <option value="">Chọn danh mục</option>
-                            <option value="Công nghệ" <c:if test="${form.category == 'Công nghệ'}">selected</c:if>>Công nghệ</option>
-                            <option value="Kinh tế" <c:if test="${form.category == 'Kinh tế'}">selected</c:if>>Kinh tế</option>
-                            <option value="Giáo dục" <c:if test="${form.category == 'Giáo dục'}">selected</c:if>>Giáo dục</option>
-                            <option value="Thể thao" <c:if test="${form.category == 'Thể thao'}">selected</c:if>>Thể thao</option>
-                            <option value="Môi trường" <c:if test="${form.category == 'Môi trường'}">selected</c:if>>Môi trường</option>
-                            <option value="Xã hội" <c:if test="${form.category == 'Xã hội'}">selected</c:if>>Xã hội</option>
-                            <option value="Ẩm thực" <c:if test="${form.category == 'Ẩm thực'}">selected</c:if>>Ẩm thực</option>
-                            <option value="Giao thông" <c:if test="${form.category == 'Giao thông'}">selected</c:if>>Giao thông</option>
-                            <option value="Văn hóa" <c:if test="${form.category == 'Văn hóa'}">selected</c:if>>Văn hóa</option>
-                            <option value="Kinh doanh" <c:if test="${form.category == 'Kinh doanh'}">selected</c:if>>Kinh doanh</option>
-                        </select>
-                        <c:if test="${not empty errors.category}">
-                            <div class="error">${errors.category}</div>
-                        </c:if>
+
+                    <div class="form-group-inline">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="categoryId">Danh mục:</label>
+                            <select id="categoryId" name="categoryId" required>
+                                <option value="">Chọn danh mục</option>
+                                <c:forEach var="cat" items="${categories}">
+                                    <option value="${cat.id}">${cat.name}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="home">Trạng thái:</label>
+                            <select id="home" name="home" required>
+                                <option value="N">Trang thường</option>
+                                <option value="Y">Trang nhất</option>
+                            </select>
+                        </div>
                     </div>
-                    
+
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Lưu bài viết</button>
-                        <button type="button" class="btn btn-secondary" onclick="clearForm()">Làm mới</button>
+                        <button type="submit" id="btnCreate" class="btn btn-primary">Tạo mới</button>
+                        <button type="submit" id="btnUpdate" class="btn btn-success" disabled>Cập nhật</button>
+                        <button type="button" class="btn btn-secondary" onclick="clearForm()">Xóa trắng</button>
                     </div>
                 </form>
             </div>
@@ -93,27 +90,29 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <c:forEach var="newsList" items="${newsList}">
-                                <c:choose>
-                                    <c:when test="${newsList.home eq 'T'}">
-                                        <c:set var="homeClass" value="status-home"/>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <c:set var="homeClass" value="status-normal"/>
-                                    </c:otherwise>
-                                </c:choose>
-                                <tr>
-                                    <td>${newsList.id}</td>
-                                    <td class="title-cell">${newsList.title}</td>
-                                    <td><fmt:formatDate value="${newsList.postedDate}" pattern="dd/MM/yyyy"/></td>
+                            <c:forEach var="news" items="${newsList}">
+                                <tr data-id="${news.id}" 
+                                    data-title="${news.title}" 
+                                    data-content="${news.content}" 
+                                    data-image="${news.image}" 
+                                    data-categoryid="${news.categoryId}" 
+                                    data-home="${news.home}">
+                                    <td>${news.id}</td>
+                                    <td class="title-cell">${news.title}</td>
+                                    <td><fmt:formatDate value="${news.postedDate}" pattern="dd/MM/yyyy HH:mm"/></td>
                                     <td>
-                                        <span class="status ${homeClass}">
-                                            ${newsList.getHomeString()}
-                                        </span>
+                                        <c:choose>
+                                            <c:when test="${news.home == 'Y'}">
+                                                <span class="status status-home">Trang nhất</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="status status-normal">Trang thường</span>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </td>
                                     <td class="actions">
-                                        <button class="btn btn-sm btn-edit" onclick="editArticle('${newsList.id}')">Sửa</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteArticle('${newsList.id}')">Xóa</button>
+                                        <button class="btn btn-sm btn-edit" onclick="editArticle(this)">Sửa</button>
+                                        <a href="${pageContext.request.contextPath}/reporter?action=delete&id=${news.id}" class="btn btn-sm btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa bài viết này?')">Xóa</a>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -127,28 +126,65 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>Welcome Phóng viên A</p>
+             <p>Welcome, ${sessionScope.user.fullname}!</p>
         </div>
     </footer>
 
     <script>
+        const form = document.getElementById('articleForm');
+        const actionInput = document.getElementById('action');
+        const idInput = document.getElementById('id');
+        const titleInput = document.getElementById('title');
+        const contentInput = document.getElementById('content');
+        const imageInput = document.getElementById('image');
+        const categoryIdInput = document.getElementById('categoryId');
+        const homeInput = document.getElementById('home');
+        const btnCreate = document.getElementById('btnCreate');
+        const btnUpdate = document.getElementById('btnUpdate');
+
         function clearForm() {
-            document.querySelector('.article-form').reset();
-            document.querySelector('input[name="id"]').value = '';
-            document.querySelector('input[name="action"]').value = 'add';
+            form.reset();
+            idInput.value = '';
+            actionInput.value = 'create';
+            btnCreate.disabled = false;
+            btnUpdate.disabled = true;
+            // Reset form action in case it was changed by editArticle
+            form.action = '${pageContext.request.contextPath}/reporter';
         }
 
-        function editArticle(id) {
-            // Mock function - trong thực tế sẽ load dữ liệu từ server
-            alert('Chức năng sửa bài viết ID: ' + id);
+        function editArticle(button) {
+            const row = button.closest('tr');
+            const id = row.dataset.id;
+            const title = row.dataset.title;
+            const content = row.dataset.content;
+            const image = row.dataset.image;
+            const categoryId = row.dataset.categoryid;
+            const home = row.dataset.home;
+
+            // Đổ dữ liệu lên form
+            idInput.value = id;
+            titleInput.value = title;
+            contentInput.value = content;
+            imageInput.value = image;
+            categoryIdInput.value = categoryId;
+            homeInput.value = home;
+
+            // Cập nhật trạng thái form và nút
+            actionInput.value = 'update';
+            btnCreate.disabled = true;
+            btnUpdate.disabled = false;
+            
+            // Change form action to point to the update logic
+            form.action = '${pageContext.request.contextPath}/reporter';
+
+            // Cuộn lên đầu trang để xem form
+            window.scrollTo(0, 0);
         }
 
-        function deleteArticle(id) {
-            if (confirm('Bạn có chắc chắn muốn xóa bài viết này?')) {
-                // Mock function - trong thực tế sẽ gửi request xóa
-                alert('Đã xóa bài viết ID: ' + id);
-            }
-        }
+        // Đảm bảo form được reset khi tải lại trang
+        window.onload = function() {
+            clearForm();
+        };
     </script>
 </body>
 </html>

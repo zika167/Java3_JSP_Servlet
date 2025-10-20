@@ -1,84 +1,140 @@
 package com.wangquocthai.java3_jsp_servlet.ASM.controller;
 
-import com.wangquocthai.java3_jsp_servlet.ASM.dao.NewsDAO;
 import com.wangquocthai.java3_jsp_servlet.ASM.dao.CategoryDAO;
-import com.wangquocthai.java3_jsp_servlet.ASM.dao.impl.NewsDAOImpl;
+import com.wangquocthai.java3_jsp_servlet.ASM.dao.NewsDAO;
 import com.wangquocthai.java3_jsp_servlet.ASM.dao.impl.CategoryDAOImpl;
-import com.wangquocthai.java3_jsp_servlet.ASM.model.News;
+import com.wangquocthai.java3_jsp_servlet.ASM.dao.impl.NewsDAOImpl;
 import com.wangquocthai.java3_jsp_servlet.ASM.model.Category;
+import com.wangquocthai.java3_jsp_servlet.ASM.model.News;
+import com.wangquocthai.java3_jsp_servlet.ASM.model.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
-/**
- * Servlet cho chức năng Phóng viên (Reporter)
- */
-@WebServlet(name = "ReporterServlet", urlPatterns = {"/reporter", "/reporter/dashboard", "/reporter/new_crud"})
+@WebServlet(name = "ReporterServlet", urlPatterns = {"/reporter"})
 public class ReporterServlet extends HttpServlet {
-    
+    private NewsDAO newsDAO;
+    private CategoryDAO categoryDAO;
+
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
-            throws ServletException, IOException {
-        
-        try {
-            NewsDAO newsDAO = new NewsDAOImpl();
-            CategoryDAO categoryDAO = new CategoryDAOImpl();
-            List<News> newsList = newsDAO.findAll();
-            List<Category> categories = categoryDAO.findAll();
-            request.setAttribute("newsList", newsList);
-            request.setAttribute("categories", categories);
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
-        // Forward đến JSP
-        request.getRequestDispatcher("/ASM/reporter/news_crud.jsp").forward(request, response);
+    public void init() {
+        newsDAO = new NewsDAOImpl();
+        categoryDAO = new CategoryDAOImpl();
     }
-    
+
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
-            throws ServletException, IOException {
-        
-        // Xử lý form thêm/sửa bài viết
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-        
-        if ("add".equals(action) || "edit".equals(action)) {
-            // Lấy dữ liệu từ form
-            String title = request.getParameter("title");
-            String content = request.getParameter("content");
-            String image = request.getParameter("image");
-            String category = request.getParameter("category");
-            
-            // Server-side validation example
-            com.wangquocthai.java3_jsp_servlet.ASM.utils.Validation v = new com.wangquocthai.java3_jsp_servlet.ASM.utils.Validation();
-            v.required("title", title, "Title is required");
-            v.required("category", category, "Category is required");
-            if (v.hasErrors()) {
-                request.setAttribute("errors", v.getErrors());
-                request.setAttribute("form", java.util.Map.of(
-                        "title", title == null ? "" : title,
-                        "content", content == null ? "" : content,
-                        "image", image == null ? "" : image,
-                        "category", category == null ? "" : category
-                ));
-                request.getRequestDispatcher("/ASM/reporter/news_crud.jsp").forward(request, response);
-                return;
-            }
-            
-            // Xử lý logic thêm/sửa (mock)
-            System.out.println("Processing article: " + title + " - " + category);
-            
-            // Redirect về trang danh sách
-            response.sendRedirect(request.getContextPath() + "/reporter");
+
+        if ("delete".equals(action)) {
+            handleDelete(request, response);
             return;
         }
-        
-        doGet(request, response);
+
+        loadPage(request, response);
     }
-    
-    // Mock data removed - data is loaded from database via DAO
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+
+        if ("create".equals(action)) {
+            handleCreate(request, response);
+        } else if ("update".equals(action)) {
+            handleUpdate(request, response);
+        }
+    }
+
+    private void loadPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            HttpSession session = request.getSession();
+            User currentUser = (User) session.getAttribute("user");
+
+            if (currentUser == null) {
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+
+            List<News> newsList = newsDAO.findByAuthor(currentUser.getId());
+            List<Category> categories = categoryDAO.findAll();
+
+            request.setAttribute("newsList", newsList);
+            request.setAttribute("categories", categories);
+
+            request.getRequestDispatcher("/ASM/reporter/news_crud.jsp").forward(request, response);
+        } catch (Exception e) {
+            throw new ServletException("Error loading page", e);
+        }
+    }
+
+    private void handleDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            String id = request.getParameter("id");
+            if (id != null && !id.isEmpty()) {
+                newsDAO.deleteById(id);
+            }
+        } catch (Exception e) {
+            // Log the error
+            e.printStackTrace();
+        }
+        response.sendRedirect(request.getContextPath() + "/reporter");
+    }
+
+    private void handleCreate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            HttpSession session = request.getSession();
+            User currentUser = (User) session.getAttribute("user");
+
+            if (currentUser == null) {
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+
+            News news = new News();
+            news.setId(newsDAO.generateNextId()); // Auto-generate ID
+            news.setTitle(request.getParameter("title"));
+            news.setContent(request.getParameter("content"));
+            news.setImage(request.getParameter("image"));
+            news.setCategoryId(request.getParameter("categoryId"));
+            news.setHome(request.getParameter("home"));
+            news.setAuthor(currentUser.getId()); // Auto-set author
+            news.setPostedDate(new Date()); // Auto-set posted date
+
+            newsDAO.insert(news);
+
+        } catch (Exception e) {
+            // Log the error
+            e.printStackTrace();
+        }
+        response.sendRedirect(request.getContextPath() + "/reporter");
+    }
+
+    private void handleUpdate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            String id = request.getParameter("id");
+            News news = newsDAO.findById(id);
+
+            if (news != null) {
+                news.setTitle(request.getParameter("title"));
+                news.setContent(request.getParameter("content"));
+                news.setImage(request.getParameter("image"));
+                news.setCategoryId(request.getParameter("categoryId"));
+                news.setHome(request.getParameter("home"));
+                // Author and PostedDate are not changed on update
+
+                newsDAO.update(news);
+            }
+        } catch (Exception e) {
+            // Log the error
+            e.printStackTrace();
+        }
+        response.sendRedirect(request.getContextPath() + "/reporter");
+    }
 }

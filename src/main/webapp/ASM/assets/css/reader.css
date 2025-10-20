@@ -1065,3 +1065,10 @@ body {
     }
 }
 
+/* News detail page specific styles */
+.news-detail-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}

@@ -17,51 +17,54 @@ import java.util.List;
 
 @WebServlet("/category")
 public class CategoryServlet extends HttpServlet {
-
     private NewsDAO newsDAO;
-    private static final int PAGE_SIZE = 5;
+    private CategoryDAO categoryDAO;
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         newsDAO = new NewsDAOImpl();
+        categoryDAO = new CategoryDAOImpl();
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            CategoryDAO categoryDAO = new CategoryDAOImpl();
+            // --- Load data for header (categories) ---
             List<Category> categories = categoryDAO.findAll();
-            req.setAttribute("categories", categories);
+            request.setAttribute("categories", categories);
 
-            String categoryId = req.getParameter("id");
+            String categoryId = request.getParameter("id");
             if (categoryId == null || categoryId.isEmpty()) {
-                resp.sendRedirect(req.getContextPath() + "/reader");
+                response.sendRedirect(request.getContextPath() + "/reader");
                 return;
             }
 
-            int currentPage = 1;
-            if (req.getParameter("page") != null) {
+            // --- Pagination Logic ---
+            int page = 1;
+            int pageSize = 6; // Match the page size in ReaderServlet
+            String pageParam = request.getParameter("page");
+            if (pageParam != null && !pageParam.isEmpty()) {
                 try {
-                    currentPage = Integer.parseInt(req.getParameter("page"));
-                    if (currentPage < 1) currentPage = 1;
+                    page = Integer.parseInt(pageParam);
                 } catch (NumberFormatException e) {
-                    currentPage = 1;
+                    page = 1;
                 }
             }
 
+            // --- Load news for the main content ---
+            List<News> newsList = newsDAO.findByCategoryWithPagination(categoryId, page, pageSize);
             int totalNews = newsDAO.countTotalNewsByCategory(categoryId);
-            int totalPages = (int) Math.ceil((double) totalNews / PAGE_SIZE);
+            int totalPages = (int) Math.ceil((double) totalNews / pageSize);
 
-            List<News> newsList = newsDAO.findByCategoryWithPagination(categoryId, currentPage, PAGE_SIZE);
+            request.setAttribute("newsList", newsList);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("selectedCategoryId", categoryId); // To highlight active category
 
-            req.setAttribute("newsList", newsList);
-            req.setAttribute("currentPage", currentPage);
-            req.setAttribute("totalPages", totalPages);
-            req.setAttribute("categoryId", categoryId);
-
-            req.getRequestDispatcher("/ASM/reader/news_list.jsp").forward(req, resp);
+            // Forward to the same view as ReaderServlet for consistency
+            request.getRequestDispatcher("/ASM/reader/news_list.jsp").forward(request, response);
         } catch (Exception e) {
-            throw new ServletException(e);
+            throw new ServletException("Error in CategoryServlet", e);
         }
     }
 }

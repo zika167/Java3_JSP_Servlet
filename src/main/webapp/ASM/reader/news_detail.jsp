@@ -4,33 +4,21 @@
 <html>
 <head>
     <title>ABC News - Chi tiết tin tức</title>
-    <link rel="stylesheet" href="/ASM/assets/css/reader.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/ASM/assets/css/reader-new.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <h1>ABC News</h1>
-            <nav class="nav">
-                <a href="/ASM/index.jsp" class="nav-link">Trang chủ</a>
-                <a href="#" class="nav-link">Văn hóa</a>
-                <a href="#" class="nav-link">Pháp luật</a>
-                <a href="#" class="nav-link">Thể thao</a>
-                <a href="#" class="nav-link">Công nghệ</a>
-                <a href="#" class="nav-link">Kinh tế</a>
-            </nav>
-        </div>
-    </header>
+    <jsp:include page="/ASM/layout/header.jsp"/>
 
     <!-- Main Content -->
     <div class="main-container">
         <div class="content">
             <!-- Breadcrumb -->
             <nav class="breadcrumb">
-                <a href="/ASM/index.jsp">Trang chủ</a> >
+                <a href="${pageContext.request.contextPath}/index.jsp">Trang chủ</a> >
                 <a href="${pageContext.request.contextPath}/reader">Danh sách tin tức</a> >
-                <span>Chi tiết tin tức</span>
+                <span>${news.title}</span>
             </nav>
 
             <!-- Article Detail -->
@@ -43,10 +31,10 @@
                     <span class="article-views">Lượt xem: ${news.viewCount}</span>
                 </div>
 
-                <div class="article-image">
-                    <img src="${pageContext.request.contextPath}/ASM/assets/images/${news.image}" 
-                         alt="${news.title}" onerror="this.src='${pageContext.request.contextPath}/ASM/assets/images/placeholder.jpg'">
-                </div>
+                <img src="${pageContext.request.contextPath}/ASM/assets/images/${news.image}" 
+                     alt="${news.title}" 
+                     class="news-detail-image" 
+                     onerror="this.src='${pageContext.request.contextPath}/ASM/assets/images/placeholder.jpg'">
 
                 <div class="article-content">
                     ${news.content}
@@ -73,29 +61,43 @@
             <!-- 5 bản tin được xem nhiều -->
             <div class="sidebar-box hot-news">
                 <h3>5 bản tin được xem nhiều</h3>
-                <ul>
+                <div class="sidebar-news-list">
                     <c:forEach var="hot" items="${applicationScope.hotNews}">
-                        <li>
-                            <a href="${pageContext.request.contextPath}/news/detail/${hot.id}">
-                                ${hot.title}
+                        <div class="sidebar-news-item">
+                            <a href="${pageContext.request.contextPath}/news/detail/${hot.id}" class="sidebar-news-link">
+                                <div class="sidebar-news-thumb">
+                                    <img src="${pageContext.request.contextPath}/ASM/assets/images/${hot.image}"
+                                         alt="${hot.title}"
+                                         onerror="this.src='https://placehold.co/60x60'">
+                                </div>
+                                <div class="sidebar-news-content">
+                                    <h4 class="sidebar-news-title">${hot.title}</h4>
+                                </div>
                             </a>
-                        </li>
+                        </div>
                     </c:forEach>
-                </ul>
+                </div>
             </div>
 
             <!-- 5 bản tin mới nhất -->
             <div class="sidebar-box latest-news">
                 <h3>5 bản tin mới nhất</h3>
-                <ul>
+                <div class="sidebar-news-list">
                     <c:forEach var="latest" items="${applicationScope.latestNews}">
-                        <li>
-                            <a href="${pageContext.request.contextPath}/news/detail/${latest.id}">
-                                ${latest.title}
+                        <div class="sidebar-news-item">
+                            <a href="${pageContext.request.contextPath}/news/detail/${latest.id}" class="sidebar-news-link">
+                                <div class="sidebar-news-thumb">
+                                    <img src="${pageContext.request.contextPath}/ASM/assets/images/${latest.image}"
+                                         alt="${latest.title}"
+                                         onerror="this.src='https://placehold.co/60x60'">
+                                </div>
+                                <div class="sidebar-news-content">
+                                    <h4 class="sidebar-news-title">${latest.title}</h4>
+                                </div>
                             </a>
-                        </li>
+                        </div>
                     </c:forEach>
-                </ul>
+                </div>
             </div>
 
             <!-- Newsletter -->

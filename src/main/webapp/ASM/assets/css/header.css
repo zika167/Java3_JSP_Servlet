@@ -200,14 +200,14 @@
 
 .header .nav-content {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.3rem;
     align-items: center;
 }
 
 .header .nav-link {
     color: #2a5298;
     text-decoration: none;
-    padding: 0.5rem 0.7rem;
+    padding: 0.5rem 0.4rem;
     border-radius: 4px;
     transition: all 0.2s ease;
     font-weight: 500;

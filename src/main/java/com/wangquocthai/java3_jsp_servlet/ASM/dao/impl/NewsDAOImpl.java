@@ -5,169 +5,150 @@ import com.wangquocthai.java3_jsp_servlet.ASM.model.News;
 import com.wangquocthai.java3_jsp_servlet.ASM.utils.Jdbc;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class NewsDAOImpl implements NewsDAO {
-    
-    @Override
-    public List<News> findWithPagination(int pageNumber, int pageSize) throws Exception {
-        String sql = "SELECT ID, TITLE, IMAGE, POSTEDDATE, AUTHOR, CATEGORYID, HOME " +
-                     "FROM JV3_NEWS " +
-                     "ORDER BY POSTEDDATE DESC " +
-                     "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-        int offset = Math.max(0, (pageNumber - 1) * pageSize);
-        List<News> list = new ArrayList<>();
-        try (ResultSet rs = Jdbc.executeQuery(sql, offset, pageSize)) {
-            while (rs.next()) {
-                News news = new News();
-                news.setId(rs.getString("ID"));
-                news.setTitle(rs.getString("TITLE"));
-                news.setImage(rs.getString("IMAGE"));
-                
-                Timestamp ts = rs.getTimestamp("POSTEDDATE");
-                news.setPostedDate(ts != null ? new Date(ts.getTime()) : null);
-                
-                news.setAuthor(rs.getString("AUTHOR"));
-                news.setCategoryId(rs.getString("CATEGORYID"));
-                news.setHome(rs.getString("HOME"));
-                
-                list.add(news);
-            }
-        }
-        return list;
-    }
-
-    @Override
-    public int countTotalNews() throws Exception {
-        String sql = "SELECT COUNT(*) AS total FROM JV3_NEWS";
-        ResultSet rs = Jdbc.executeQuery(sql);
-        if (rs.next()) {
-            return rs.getInt("total");
-        }
-        return 0;
-    }
 
     @Override
     public int insert(News news) throws Exception {
-    String sql = "INSERT INTO JV3_NEWS(ID, TITLE, CONTENT, IMAGE, POSTEDDATE, AUTHOR, VIEWCOUNT, CATEGORYID, HOME) VALUES(?,?,?,?,?,?,?,?,?)";
-        Timestamp ts = news.getPostedDate() == null ? null : new Timestamp(news.getPostedDate().getTime());
-        return Jdbc.executeUpdate(sql
-                , news.getId()
-                , news.getTitle()
-                , news.getContent()
-                , news.getImage()
-                , ts
-                , news.getAuthor()
-                , news.getViewCount()
-                , news.getCategoryId()
-                , news.getHome()
+        String sql = "INSERT INTO JV3_NEWS(ID, TITLE, CONTENT, IMAGE, POSTEDDATE, AUTHOR, CATEGORYID, HOME) VALUES(?,?,?,?,?,?,?,?)";
+        Timestamp ts = (news.getPostedDate() == null) ? null : new Timestamp(news.getPostedDate().getTime());
+        return Jdbc.executeUpdate(sql,
+                news.getId(),
+                news.getTitle(),
+                news.getContent(),
+                news.getImage(),
+                ts,
+                news.getAuthor(),
+                news.getCategoryId(),
+                news.getHome()
         );
     }
 
     @Override
     public int update(News news) throws Exception {
-    String sql = "UPDATE JV3_NEWS SET TITLE=?, CONTENT=?, IMAGE=?, POSTEDDATE=?, AUTHOR=?, VIEWCOUNT=?, CATEGORYID=?, HOME=? WHERE ID=?";
-        Timestamp ts = news.getPostedDate() == null ? null : new Timestamp(news.getPostedDate().getTime());
-        return Jdbc.executeUpdate(
-                sql
-                , news.getTitle()
-                , news.getContent()
-                , news.getImage()
-                , ts
-                , news.getAuthor()
-                , news.getViewCount()
-                , news.getCategoryId()
-                , news.getHome()
-                , news.getId()
+        String sql = "UPDATE JV3_NEWS SET TITLE=?, CONTENT=?, IMAGE=?, CATEGORYID=?, HOME=? WHERE ID=?";
+        return Jdbc.executeUpdate(sql,
+                news.getTitle(),
+                news.getContent(),
+                news.getImage(),
+                news.getCategoryId(),
+                news.getHome(),
+                news.getId()
         );
     }
 
     @Override
     public int deleteById(String id) throws Exception {
-    String sql = "DELETE FROM JV3_NEWS WHERE ID=?";
+        String sql = "DELETE FROM JV3_NEWS WHERE ID=?";
         return Jdbc.executeUpdate(sql, id);
     }
 
     @Override
     public List<News> findAll() throws Exception {
-    String sql = "SELECT ID, TITLE, CONTENT, IMAGE, POSTEDDATE, AUTHOR, VIEWCOUNT, CATEGORYID, HOME FROM JV3_NEWS";
-        ResultSet rs = Jdbc.executeQuery(sql);
-        List<News> list = new ArrayList<>();
-        while (rs.next()) {
-            News n = new News();
-            n.setId(rs.getString("ID"));
-            n.setTitle(rs.getString("TITLE"));
-            n.setContent(rs.getString("CONTENT"));
-            n.setImage(rs.getString("IMAGE"));
-            Timestamp ts = rs.getTimestamp("POSTEDDATE");
-            if (ts != null) n.setPostedDate(new Date(ts.getTime()));
-            n.setAuthor(rs.getString("AUTHOR"));
-            n.setViewCount(rs.getInt("VIEWCOUNT"));
-            n.setCategoryId(rs.getString("CATEGORYID"));
-            n.setHome(rs.getString("HOME"));
-            list.add(n);
+        String sql = "SELECT * FROM JV3_NEWS ORDER BY POSTEDDATE DESC";
+        try (ResultSet rs = Jdbc.executeQuery(sql)) {
+            return mapResultSetToNewsList(rs);
         }
-        rs.getStatement().getConnection().close();
-        return list;
     }
 
     @Override
     public News findById(String id) throws Exception {
-    String sql = "SELECT ID, TITLE, CONTENT, IMAGE, POSTEDDATE, AUTHOR, VIEWCOUNT, CATEGORYID, HOME FROM JV3_NEWS WHERE ID=?";
-        ResultSet rs = Jdbc.executeQuery(sql, id);
-        if (rs.next()) {
-            News n = new News();
-            n.setId(rs.getString("ID"));
-            n.setTitle(rs.getString("TITLE"));
-            n.setContent(rs.getString("CONTENT"));
-            n.setImage(rs.getString("IMAGE"));
-            Timestamp ts = rs.getTimestamp("POSTEDDATE");
-            if (ts != null) n.setPostedDate(new Date(ts.getTime()));
-            n.setAuthor(rs.getString("AUTHOR"));
-            n.setViewCount(rs.getInt("VIEWCOUNT"));
-            n.setCategoryId(rs.getString("CATEGORYID"));
-            n.setHome(rs.getString("HOME"));
-            rs.getStatement().getConnection().close();
-            return n;
+        String sql = "SELECT * FROM JV3_NEWS WHERE ID=?";
+        try (ResultSet rs = Jdbc.executeQuery(sql, id)) {
+            if (rs.next()) {
+                return mapRowToNews(rs);
+            }
         }
-        rs.getStatement().getConnection().close();
         return null;
     }
 
     @Override
+    public List<News> findByAuthor(String authorId) throws Exception {
+        String sql = "SELECT * FROM JV3_NEWS WHERE AUTHOR = ? ORDER BY POSTEDDATE DESC";
+        try (ResultSet rs = Jdbc.executeQuery(sql, authorId)) {
+            return mapResultSetToNewsList(rs);
+        }
+    }
+
+    @Override
+    public String generateNextId() throws Exception {
+        String sql = "SELECT MAX(SUBSTR(ID, 5)) FROM JV3_NEWS WHERE ID LIKE 'NEWS%'";
+        int nextNum = 1;
+        try (ResultSet rs = Jdbc.executeQuery(sql)) {
+            if (rs.next()) {
+                String lastNumStr = rs.getString(1);
+                if (lastNumStr != null) {
+                    nextNum = Integer.parseInt(lastNumStr) + 1;
+                }
+            }
+        }
+        return String.format("NEWS%03d", nextNum);
+    }
+
+    @Override
+    public int countTotalNews() throws Exception {
+        String sql = "SELECT COUNT(*) FROM JV3_NEWS";
+        try (ResultSet rs = Jdbc.executeQuery(sql)) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public List<News> findWithPagination(int pageNumber, int pageSize) throws Exception {
+        String sql = "SELECT * FROM JV3_NEWS ORDER BY POSTEDDATE DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        int offset = Math.max(0, (pageNumber - 1) * pageSize);
+        try (ResultSet rs = Jdbc.executeQuery(sql, offset, pageSize)) {
+            return mapResultSetToNewsList(rs);
+        }
+    }
+
+    @Override
     public int countTotalNewsByCategory(String categoryId) throws Exception {
-        String sql = "SELECT COUNT(*) AS total FROM JV3_NEWS WHERE CATEGORYID = ?";
-        ResultSet rs = Jdbc.executeQuery(sql, categoryId);
-        if (rs.next()) {
-            return rs.getInt("total");
+        String sql = "SELECT COUNT(*) FROM JV3_NEWS WHERE CATEGORYID = ?";
+        try (ResultSet rs = Jdbc.executeQuery(sql, categoryId)) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
         }
         return 0;
     }
 
     @Override
     public List<News> findByCategoryWithPagination(String categoryId, int pageNumber, int pageSize) throws Exception {
-        String sql = "SELECT ID, TITLE, IMAGE, POSTEDDATE, AUTHOR, CATEGORYID, HOME " +
-                     "FROM JV3_NEWS WHERE CATEGORYID = ? " +
-                     "ORDER BY POSTEDDATE DESC " +
-                     "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        String sql = "SELECT * FROM JV3_NEWS WHERE CATEGORYID = ? ORDER BY POSTEDDATE DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         int offset = Math.max(0, (pageNumber - 1) * pageSize);
-        List<News> list = new ArrayList<>();
         try (ResultSet rs = Jdbc.executeQuery(sql, categoryId, offset, pageSize)) {
-            while (rs.next()) {
-                News news = new News();
-                news.setId(rs.getString("ID"));
-                news.setTitle(rs.getString("TITLE"));
-                news.setImage(rs.getString("IMAGE"));
-                Timestamp ts = rs.getTimestamp("POSTEDDATE");
-                news.setPostedDate(ts != null ? new Date(ts.getTime()) : null);
-                news.setAuthor(rs.getString("AUTHOR"));
-                news.setCategoryId(rs.getString("CATEGORYID"));
-                news.setHome(rs.getString("HOME"));
-                list.add(news);
-            }
+            return mapResultSetToNewsList(rs);
+        }
+    }
+
+    private News mapRowToNews(ResultSet rs) throws SQLException {
+        News news = new News();
+        news.setId(rs.getString("ID"));
+        news.setTitle(rs.getString("TITLE"));
+        news.setContent(rs.getString("CONTENT"));
+        news.setImage(rs.getString("IMAGE"));
+        Timestamp ts = rs.getTimestamp("POSTEDDATE");
+        news.setPostedDate(ts != null ? new Date(ts.getTime()) : null);
+        news.setAuthor(rs.getString("AUTHOR"));
+        news.setViewCount(rs.getInt("VIEWCOUNT"));
+        news.setCategoryId(rs.getString("CATEGORYID"));
+        news.setHome(rs.getString("HOME"));
+        return news;
+    }
+
+    private List<News> mapResultSetToNewsList(ResultSet rs) throws SQLException {
+        List<News> list = new ArrayList<>();
+        while (rs.next()) {
+            list.add(mapRowToNews(rs));
         }
         return list;
     }

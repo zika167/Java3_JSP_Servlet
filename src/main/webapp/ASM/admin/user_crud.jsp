@@ -3,8 +3,10 @@
 <html>
 <head>
     <title>ABC News - Quản lý người dùng</title>
-    <link rel="stylesheet" href="/ASM/assets/css/admin.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/ASM/assets/css/admin.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/ASM/assets/css/admin-enhanced.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="context-path" content="${pageContext.request.contextPath}">
 </head>
 <body>
     <!-- Header -->
@@ -17,7 +19,7 @@
     <!-- Navigation -->
     <nav class="nav-menu">
         <div class="container">
-            <a href="/ASM/index.jsp" class="nav-link">Trang chủ</a>
+            <a href="${pageContext.request.contextPath}/ASM/index.jsp" class="nav-link">Trang chủ</a>
             <a href="#" class="nav-link">Tin tức</a>
             <a href="#" class="nav-link">Loại tin</a>
             <a href="#" class="nav-link active">Người dùng</a>
@@ -28,50 +30,61 @@
     <!-- Main Content -->
     <div class="main-container">
         <div class="content">
-            <!-- Form thêm tài khoản -->
+            <!-- Success/Error Messages -->
+            <c:if test="${not empty sessionScope.success}">
+                <div class="alert alert-success">${sessionScope.success}</div>
+                <c:remove var="success" scope="session"/>
+            </c:if>
+            <c:if test="${not empty error}">
+                <div class="alert alert-error">${error}</div>
+            </c:if>
+            
+            <!-- Form thêm/sửa tài khoản -->
             <div class="form-section">
-                <h2>Thêm tài khoản mới</h2>
-                <form action="../admin" method="post" class="user-form">
-                    <input type="hidden" name="action" value="add">
+                <h2>Quản lý tài khoản</h2>
+                <form id="userForm" action="${pageContext.request.contextPath}/admin" method="post" class="user-form">
+                    <input type="hidden" id="action" name="action" value="CREATE">
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="username">Tên đăng nhập:</label>
-                            <input type="text" id="username" name="username" required value="${form.username}">
-                            <c:if test="${not empty errors.username}">
-                                <div class="error">${errors.username}</div>
-                            </c:if>
+                            <label for="id">Tên đăng nhập: *</label>
+                            <input type="text" id="id" name="id" required value="${form.id}">
                         </div>
                         
                         <div class="form-group">
-                            <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" required value="${form.email}">
-                            <c:if test="${not empty errors.email}">
-                                <div class="error">${errors.email}</div>
-                            </c:if>
+                            <label for="password">Mật khẩu: *</label>
+                            <input type="password" id="password" name="password" required placeholder="Nhập mật khẩu">
                         </div>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="fullName">Họ và tên:</label>
-                            <input type="text" id="fullName" name="fullName" required value="${form.fullName}">
+                            <label for="fullname">Họ và tên: *</label>
+                            <input type="text" id="fullname" name="fullname" required value="${form.fullname}">
                         </div>
                         
                         <div class="form-group">
-                            <label for="role">Vai trò:</label>
+                            <label for="email">Email: *</label>
+                            <input type="email" id="email" name="email" required value="${form.email}">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="role">Vai trò: *</label>
                             <select id="role" name="role" required>
                                 <option value="">Chọn vai trò</option>
-                                <option value="Admin"><c:if test="${form.role == 'Admin'}">selected</c:if>Admin</option>
-                                <option value="Reporter"><c:if test="${form.role == 'Reporter'}">selected</c:if>Reporter</option>
-                                <option value="Reader"><c:if test="${form.role == 'Reader'}">selected</c:if>Reader</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Reporter">Reporter</option>
+                                <option value="Reader">Reader</option>
                             </select>
                         </div>
                     </div>
                     
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Thêm tài khoản</button>
-                        <button type="button" class="btn btn-secondary" onclick="clearForm()">Làm mới</button>
+                        <button type="button" id="createBtn" class="btn btn-primary">Tạo mới</button>
+                        <button type="button" id="updateBtn" class="btn btn-success disabled" disabled>Cập nhật</button>
+                        <button type="button" id="resetBtn" class="btn btn-secondary">Làm mới</button>
                     </div>
                 </form>
             </div>
@@ -93,7 +106,10 @@
                         </thead>
                         <tbody>
                             <c:forEach var="user" items="${users}">
-                                <tr>
+                                <tr data-user-id="${user.id}" 
+                                    data-fullname="${user.fullname}" 
+                                    data-email="${user.email}" 
+                                    data-role="${user.getRoleString()}">
                                     <td>${user.id}</td>
                                     <td class="username-cell">${user.fullname}</td>
                                     <td class="email-cell">${user.email}</td>
@@ -108,15 +124,18 @@
                                         </span>
                                     </td>
                                     <td class="actions">
-                                        <c:choose>
-                                            <c:when test="${user.active}">
-                                                <button class="btn btn-sm btn-lock" onclick="lockUser('${user.id}')">Khóa</button>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <button class="btn btn-sm btn-unlock" onclick="unlockUser('${user.id}')">Mở khóa</button>
-                                            </c:otherwise>
-                                        </c:choose>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteUser('${user.id}')">Xóa</button>
+                                        <button class="btn btn-sm btn-edit" data-id="${user.id}">
+                                            <i class="fas fa-edit"></i> Sửa
+                                        </button>
+                                        <button class="btn btn-sm btn-toggle-status" 
+                                                data-id="${user.id}" 
+                                                data-active="${user.active}">
+                                            <i class="fas fa-${user.active ? 'lock' : 'unlock'}"></i>
+                                            ${user.active ? 'Khóa' : 'Mở'}
+                                        </button>
+                                        <button class="btn btn-sm btn-delete" data-id="${user.id}">
+                                            <i class="fas fa-trash"></i> Xóa
+                                        </button>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -130,31 +149,8 @@
     <!-- Footer -->
     <jsp:include page="/ASM/layout/footer.jsp"/>
 
-    <script>
-        function clearForm() {
-            document.querySelector('.user-form').reset();
-        }
-
-        function lockUser(id) {
-            if (confirm('Bạn có chắc chắn muốn khóa tài khoản này?')) {
-                // Mock function - trong thực tế sẽ gửi request khóa
-                alert('Đã khóa tài khoản ID: ' + id);
-            }
-        }
-
-        function unlockUser(id) {
-            if (confirm('Bạn có chắc chắn muốn mở khóa tài khoản này?')) {
-                // Mock function - trong thực tế sẽ gửi request mở khóa
-                alert('Đã mở khóa tài khoản ID: ' + id);
-            }
-        }
-
-        function deleteUser(id) {
-            if (confirm('Bạn có chắc chắn muốn xóa tài khoản này? Hành động này không thể hoàn tác!')) {
-                // Mock function - trong thực tế sẽ gửi request xóa
-                alert('Đã xóa tài khoản ID: ' + id);
-            }
-        }
-    </script>
+    <!-- Admin CRUD JavaScript -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="${pageContext.request.contextPath}/ASM/assets/js/admin-crud.js"></script>
 </body>
 </html>

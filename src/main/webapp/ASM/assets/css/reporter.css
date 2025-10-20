@@ -153,9 +153,26 @@ body {
     box-shadow: 0 3px 10px rgba(30,60,114,0.3);
 }
 
-.btn-secondary {
-    background: #6c757d;
-    color: white;
+.btn-success {
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    color: #333; /* Màu chữ tối để dễ đọc trên nền vàng */
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(204, 163, 0, 0.3); /* Bóng đổ màu vàng đậm */
+}
+
+/* --- CSS cho trạng thái BỊ VÔ HIỆU HÓA --- */
+.btn-success:disabled {
+    /* Dùng một màu vàng nhạt, mờ hơn */
+    background: linear-gradient(135deg, #fff2ab 0%, #fff7c7 100%);
+    color: #b0a889; /* Màu chữ xám nhạt */
+    cursor: not-allowed; /* Biểu tượng con trỏ cấm */
+
+    /* Tắt các hiệu ứng không cần thiết */
+    transform: none;
+    box-shadow: none;
 }
 
 .btn-secondary:hover {
