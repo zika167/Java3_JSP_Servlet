@@ -599,7 +599,6 @@ body {
 
 .nav-content {
     display: flex;
-    gap: 2rem;
     align-items: center;
 }
 

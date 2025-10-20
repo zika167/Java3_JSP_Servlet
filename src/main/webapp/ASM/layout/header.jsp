@@ -1,5 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
+
+<c:if test="${not empty sessionScope.lang}">
+    <fmt:setLocale value="${sessionScope.lang}" scope="request" />
+</c:if>
+<fmt:setBundle basename="i18n.header" scope="request" />
 
 <!-- Include required CSS and JS -->
 <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
@@ -19,8 +25,8 @@
                 <div class="logo-section">
                     <img src="${pageContext.request.contextPath}/ASM/assets/images/logo.png" alt="Logo" class="logo-image">
                     <div class="site-title">
-                        <h1>ABC News</h1>
-                        <span class="site-subtitle">Hệ thống quản lý tin tức</span>
+                        <h1><fmt:message key="header.sitename"/></h1>
+                        <span class="site-subtitle"><fmt:message key="header.subtitle"/></span>
                     </div>
                 </div>
 
@@ -31,8 +37,8 @@
                 <div class="utility-section">
                     <!-- Search -->
                     <div class="search-container">
-                        <input type="text" class="search-input" placeholder="Tìm kiếm tin tức...">
-                        <button class="search-toggle">
+                        <input type="text" class="search-input" placeholder="<fmt:message key='header.search.placeholder'/>">
+                        <button class="search-toggle" aria-label="Search">
                             <i class="fas fa-search"></i>
                         </button>
                     </div>
@@ -40,33 +46,36 @@
                     <c:choose>
                         <c:when test="${not empty sessionScope.user}">
                             <!-- User is logged in -->
-                            <span class="user-greeting">
+                            <div class="user-greeting">
+                                <c:if test="${sessionScope.user.role == 'A'}">
+                                    <span class="role-badge admin">ADMIN</span>
+                                </c:if>
+                                <c:if test="${sessionScope.user.role == 'R'}">
+                                    <span class="role-badge reporter">REPORTER</span>
+                                </c:if>
                                 <i class="fas fa-user"></i>
-                                ${sessionScope.user.fullname}
-                            </span>
+                                <span><fmt:message key="header.welcome"/>, ${sessionScope.user.fullname}</span>
+                            </div>
                             <a href="${pageContext.request.contextPath}/auth/logout" class="utility-link">
-                                <i class="fas fa-sign-out-alt"></i>
-                                Đăng xuất
+                                <i class="fas fa-sign-out-alt"></i> <fmt:message key="header.logout"/>
                             </a>
                         </c:when>
                         <c:otherwise>
                             <!-- User is not logged in -->
                             <a href="#" class="utility-link" data-auth-action="login">
-                                <i class="fas fa-sign-in-alt"></i>
-                                Đăng nhập
+                                <i class="fas fa-sign-in-alt"></i> <fmt:message key="header.login"/>
                             </a>
                             <a href="#" class="utility-link signup-link" data-auth-action="signup">
-                                <i class="fas fa-user-plus"></i>
-                                Đăng ký
+                                <i class="fas fa-user-plus"></i> <fmt:message key="header.signup"/>
                             </a>
                         </c:otherwise>
                     </c:choose>
 
                     <!-- Language Selector -->
                     <div class="lang-selector">
-                        <a href="?lang=vi" class="lang-link ${sessionScope.lang != 'en' ? 'active' : ''}">VI</a>
+                        <a href="${pageContext.request.contextPath}/lang?locale=vi" class="lang-link ${empty sessionScope.lang or sessionScope.lang == 'vi' ? 'active' : ''}">VI</a>
                         <span class="lang-divider">|</span>
-                        <a href="?lang=en" class="lang-link ${sessionScope.lang == 'en' ? 'active' : ''}">EN</a>
+                        <a href="${pageContext.request.contextPath}/lang?locale=en" class="lang-link ${sessionScope.lang == 'en' ? 'active' : ''}">EN</a>
                     </div>
                 </div>
             </div>
@@ -77,12 +86,12 @@
         <div class="container">
             <div class="nav-content">
                 <a href="${pageContext.request.contextPath}/reader" class="nav-link">
-                    <i class="fas fa-home"></i> Trang chủ
+                    <fmt:message key="header.nav.home"/>
                 </a>
 
                 <c:forEach var="category" items="${categories}">
                     <a href="${pageContext.request.contextPath}/category?id=${category.id}" class="nav-link">
-                        <i class="fas fa-tag"></i> ${category.name}
+                        ${category.name}
                     </a>
                 </c:forEach>
 
@@ -90,12 +99,12 @@
                 <c:choose>
                     <c:when test="${sessionScope.user.role == 'A'}">
                         <a href="${pageContext.request.contextPath}/admin" class="nav-link admin-link">
-                            <i class="fas fa-cogs"></i> Trang quản trị
+                            <fmt:message key="header.nav.admin"/>
                         </a>
                     </c:when>
                     <c:when test="${sessionScope.user.role == 'R'}">
                         <a href="${pageContext.request.contextPath}/reporter" class="nav-link reporter-link">
-                            <i class="fas fa-newspaper"></i> Trang phóng viên
+                            <fmt:message key="header.nav.reporter"/>
                         </a>
                     </c:when>
                 </c:choose>
@@ -141,13 +150,13 @@
 <div id="authModalOverlay" class="modal-overlay"></div>
 <div id="authModalContainer" class="modal-container">
     <div class="modal-header">
-        <h2 class="modal-title">Xác thực</h2>
-        <button class="modal-close" aria-label="Đóng">&times;</button>
+        <h2 class="modal-title"><fmt:message key="modal.title"/></h2>
+        <button class="modal-close" aria-label="Close">&times;</button>
     </div>
     
     <div class="modal-tabs">
-        <button class="modal-tab active" data-tab="login">Đăng nhập</button>
-        <button class="modal-tab" data-tab="signup">Đăng ký</button>
+        <button class="modal-tab active" data-tab="login"><fmt:message key="modal.login.tab"/></button>
+        <button class="modal-tab" data-tab="signup"><fmt:message key="modal.signup.tab"/></button>
     </div>
     
     <div class="modal-body">
@@ -157,23 +166,23 @@
             <div class="success-message"></div>
             
             <div class="form-group">
-                <label for="loginId">Tên đăng nhập hoặc Email</label>
+                <label for="loginId"><fmt:message key="modal.login.username"/></label>
                 <input type="text" id="loginId" name="id" required autocomplete="username">
             </div>
             
             <div class="form-group">
-                <label for="loginPassword">Mật khẩu</label>
+                <label for="loginPassword"><fmt:message key="modal.login.password"/></label>
                 <input type="password" id="loginPassword" name="password" required autocomplete="current-password">
             </div>
             
             <div class="form-actions">
-                <button type="submit" class="btn-modal btn-primary" data-original-text="Đăng nhập">
-                    Đăng nhập
+                <button type="submit" class="btn-modal btn-primary">
+                    <fmt:message key="modal.login.button"/>
                 </button>
             </div>
             
             <div class="form-footer">
-                Chưa có tài khoản? <a href="#" data-auth-action="signup">Đăng ký ngay</a>
+                <fmt:message key="modal.login.footer"/> <a href="#" data-auth-action="signup"><fmt:message key="modal.login.signup"/></a>
             </div>
         </form>
         
@@ -183,38 +192,38 @@
             <div class="success-message"></div>
             
             <div class="form-group">
-                <label for="signupId">Tên đăng nhập *</label>
+                <label for="signupId"><fmt:message key="modal.signup.username"/></label>
                 <input type="text" id="signupId" name="id" required autocomplete="username">
             </div>
             
             <div class="form-group">
-                <label for="signupFullname">Họ và tên *</label>
+                <label for="signupFullname"><fmt:message key="modal.signup.fullname"/></label>
                 <input type="text" id="signupFullname" name="fullname" required autocomplete="name">
             </div>
             
             <div class="form-group">
-                <label for="signupEmail">Email *</label>
+                <label for="signupEmail"><fmt:message key="modal.signup.email"/></label>
                 <input type="email" id="signupEmail" name="email" required autocomplete="email">
             </div>
             
             <div class="form-group">
-                <label for="signupPassword">Mật khẩu *</label>
+                <label for="signupPassword"><fmt:message key="modal.signup.password"/></label>
                 <input type="password" id="signupPassword" name="password" required autocomplete="new-password">
             </div>
             
             <div class="form-group">
-                <label for="signupConfirmPassword">Xác nhận mật khẩu *</label>
+                <label for="signupConfirmPassword"><fmt:message key="modal.signup.confirm"/></label>
                 <input type="password" id="signupConfirmPassword" name="confirmPassword" required autocomplete="new-password">
             </div>
             
             <div class="form-actions">
-                <button type="submit" class="btn-modal btn-primary" data-original-text="Đăng ký">
-                    Đăng ký
+                <button type="submit" class="btn-modal btn-primary">
+                    <fmt:message key="modal.signup.button"/>
                 </button>
             </div>
             
             <div class="form-footer">
-                Đã có tài khoản? <a href="#" data-auth-action="login">Đăng nhập ngay</a>
+                <fmt:message key="modal.signup.footer"/> <a href="#" data-auth-action="login"><fmt:message key="modal.signup.login"/></a>
             </div>
         </form>
     </div>

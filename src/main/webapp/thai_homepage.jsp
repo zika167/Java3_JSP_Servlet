@@ -11,7 +11,7 @@
     <title>Title</title>
 </head>
 <body>
-    <a href="/ASM/reader/news_list.jsp">ASM: TRANG BÁO ABC NEWS</a>
+    <a href="${pageContext.request.contextPath}/reader">ASM: TRANG BÁO ABC NEWS</a>
     <br/>
     <hr/>
     <a href="/lab1/index.jsp">TỔNG QUAN LAB 1</a>

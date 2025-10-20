@@ -4,7 +4,7 @@
 <html>
 <head>
     <title>ABC News - Hệ thống quản lý tin tức</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/ASM/assets/css/reader-new.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/ASM/assets/css/reader.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/ASM/assets/css/index.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>

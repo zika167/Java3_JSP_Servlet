@@ -24,11 +24,13 @@ public class AuthFilter implements Filter {
         if (path.startsWith("/ASM/assets/") ||
             path.startsWith("/auth/") ||
             path.startsWith("/reader") ||
-            path.startsWith("/news/detail/") ||
+            path.startsWith("/news/detail") ||
             path.equals("/") ||
             path.equals("/index.jsp") ||
+            path.equals("/thai_homepage.jsp") ||
             path.startsWith("/category") ||
-            path.startsWith("/newsletter")
+            path.startsWith("/newsletter") ||
+            path.startsWith("/lab")
         ) {
             chain.doFilter(request, response);
             return;

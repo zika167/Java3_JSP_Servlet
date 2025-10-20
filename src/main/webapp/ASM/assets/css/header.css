@@ -64,14 +64,14 @@
     color: rgba(255,255,255,0.95);
     text-align: center;
     flex: 1;
-    max-width: 400px;
+    max-width: 100px;
 }
 
 /* Utility Section */
 .header .utility-section {
     display: flex;
     align-items: center;
-    gap: 1.25rem;
+    gap: 0.3rem;
 }
 
 .header .utility-link {
@@ -81,7 +81,7 @@
     align-items: center;
     gap: 0.5rem;
     font-size: 0.9rem;
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem 0.5rem;
     border-radius: 4px;
     transition: all 0.2s ease;
     background-color: rgba(255,255,255,0.1);
@@ -169,7 +169,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.25rem 0.5rem;
+    padding: 0.25rem 0.25rem;
     background-color: rgba(255,255,255,0.1);
     border-radius: 4px;
 }
@@ -200,20 +200,19 @@
 
 .header .nav-content {
     display: flex;
-    gap: 0.3rem;
+    width: 100%;
+    justify-content: space-between;
     align-items: center;
 }
 
 .header .nav-link {
     color: #2a5298;
     text-decoration: none;
-    padding: 0.5rem 0.4rem;
+    padding: 0.75rem 1rem;
     border-radius: 4px;
     transition: all 0.2s ease;
     font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    white-space: nowrap;
 }
 
 .header .nav-link:hover {
@@ -221,9 +220,7 @@
     transform: translateY(-1px);
 }
 
-.header .nav-link i {
-    font-size: 0.9em;
-}
+/* Icon styles removed - no longer using icons in nav */
 
 /* Reader Menu */
 .reader-menu {
