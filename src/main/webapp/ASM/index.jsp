@@ -108,7 +108,22 @@
             <!-- Newsletter -->
             <div class="newsletter-box">
                 <h3>Đăng ký nhận bản tin</h3>
-                <form action="#" method="post">
+                
+                <!-- Success/Error Messages -->
+                <c:if test="${not empty sessionScope.newsletterSuccess}">
+                    <div class="alert alert-success" style="margin-bottom: 15px; padding: 10px; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 5px;">
+                        ${sessionScope.newsletterSuccess}
+                    </div>
+                    <c:remove var="newsletterSuccess" scope="session"/>
+                </c:if>
+                <c:if test="${not empty sessionScope.newsletterError}">
+                    <div class="alert alert-error" style="margin-bottom: 15px; padding: 10px; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px;">
+                        ${sessionScope.newsletterError}
+                    </div>
+                    <c:remove var="newsletterError" scope="session"/>
+                </c:if>
+                
+                <form action="${pageContext.request.contextPath}/newsletter" method="post">
                     <input type="email" name="email" placeholder="Nhập email của bạn" required>
                     <button type="submit">Đăng ký</button>
                 </form>

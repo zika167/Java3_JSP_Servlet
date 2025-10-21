@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 
-@WebServlet(name = "RegisterServlet", value = "/account/register")
+@WebServlet(name = "RegisterServlet", value = "/account/register1")
 public class RegisterServlet extends HttpServlet {
 
     @Override

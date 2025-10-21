@@ -56,10 +56,14 @@ public class CategoryServlet extends HttpServlet {
             int totalNews = newsDAO.countTotalNewsByCategory(categoryId);
             int totalPages = (int) Math.ceil((double) totalNews / pageSize);
 
+            // --- Load 5 most viewed news for sidebar ---
+            List<News> mostViewedNews = newsDAO.findMostViewed(5);
+
             request.setAttribute("newsList", newsList);
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("selectedCategoryId", categoryId); // To highlight active category
+            request.setAttribute("mostViewedNews", mostViewedNews);
 
             // Forward to the same view as ReaderServlet for consistency
             request.getRequestDispatcher("/ASM/reader/news_list.jsp").forward(request, response);

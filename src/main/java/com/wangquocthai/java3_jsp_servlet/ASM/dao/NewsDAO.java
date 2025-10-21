@@ -15,4 +15,5 @@ public interface NewsDAO {
     List<News> findWithPagination(int pageNumber, int pageSize) throws Exception;
     int countTotalNewsByCategory(String categoryId) throws Exception;
     List<News> findByCategoryWithPagination(String categoryId, int pageNumber, int pageSize) throws Exception;
+    List<News> findMostViewed(int limit) throws Exception; // For "5 tin tức được xem gần nhất"
 }

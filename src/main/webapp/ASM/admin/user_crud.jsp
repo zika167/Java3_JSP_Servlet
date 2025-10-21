@@ -19,11 +19,11 @@
     <!-- Navigation -->
     <nav class="nav-menu">
         <div class="container">
-            <a href="${pageContext.request.contextPath}/ASM/index.jsp" class="nav-link">Trang chủ</a>
-            <a href="#" class="nav-link">Tin tức</a>
-            <a href="#" class="nav-link">Loại tin</a>
-            <a href="#" class="nav-link active">Người dùng</a>
-            <a href="#" class="nav-link">Newsletter</a>
+            <a href="${pageContext.request.contextPath}/reader" class="nav-link">Trang chủ</a>
+            <a href="${pageContext.request.contextPath}/admin/news" class="nav-link">Tin tức</a>
+            <a href="${pageContext.request.contextPath}/admin/category" class="nav-link">Loại tin</a>
+            <a href="${pageContext.request.contextPath}/admin" class="nav-link active">Người dùng</a>
+            <a href="${pageContext.request.contextPath}/admin/newsletter" class="nav-link">Newsletter</a>
         </div>
     </nav>
 

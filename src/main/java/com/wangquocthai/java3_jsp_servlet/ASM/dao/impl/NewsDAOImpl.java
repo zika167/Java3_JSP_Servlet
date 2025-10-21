@@ -152,4 +152,11 @@ public class NewsDAOImpl implements NewsDAO {
         }
         return list;
     }
+
+    @Override
+    public List<News> findMostViewed(int limit) throws Exception {
+        String sql = "SELECT * FROM JV3_NEWS ORDER BY VIEWCOUNT DESC LIMIT ?";
+        ResultSet rs = Jdbc.executeQuery(sql, limit);
+        return mapResultSetToNewsList(rs);
+    }
 }

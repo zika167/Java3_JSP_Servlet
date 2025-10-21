@@ -13,7 +13,7 @@
 }
 
 .header .container {
-    max-width: 1200px;
+    max-width: 1320px;
     margin: 0 auto;
     padding: 0 1rem;
 }
@@ -81,7 +81,7 @@
     align-items: center;
     gap: 0.5rem;
     font-size: 0.9rem;
-    padding: 0.5rem 0.5rem;
+    padding: 0.5rem 0.75rem;
     border-radius: 4px;
     transition: all 0.2s ease;
     background-color: rgba(255,255,255,0.1);
@@ -169,7 +169,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.25rem 0.25rem;
+    padding: 0.25rem 0.5rem;
     background-color: rgba(255,255,255,0.1);
     border-radius: 4px;
 }
@@ -201,7 +201,7 @@
 .header .nav-content {
     display: flex;
     width: 100%;
-    justify-content: space-between;
+    gap: 10px;
     align-items: center;
 }
 

@@ -120,9 +120,47 @@
                 </div>
             </div>
 
+            <!-- 5 tin tức được xem gần nhất -->
+            <div class="sidebar-box most-viewed-box">
+                <h3>5 bản tin được xem nhiều</h3>
+                <div class="most-viewed-list">
+                    <c:forEach var="viewedNews" items="${mostViewedNews}" varStatus="status">
+                        <div class="most-viewed-item">
+                            <span class="item-number">${status.index + 1}</span>
+                            <div class="item-content">
+                                <a href="${pageContext.request.contextPath}/news/detail/${viewedNews.id}" class="item-title">
+                                    ${viewedNews.title}
+                                </a>
+                                <div class="item-meta">
+                                    <span class="view-count">${viewedNews.viewCount} lượt xem</span>
+                                </div>
+                            </div>
+                        </div>
+                    </c:forEach>
+                    <c:if test="${empty mostViewedNews}">
+                        <p style="text-align: center; color: #666; font-style: italic;">Chưa có tin tức nào</p>
+                    </c:if>
+                </div>
+            </div>
+
             <!-- Newsletter -->
             <div class="sidebar-box newsletter-box">
                 <h3>Đăng ký nhận bản tin</h3>
+                
+                <!-- Success/Error Messages -->
+                <c:if test="${not empty sessionScope.newsletterSuccess}">
+                    <div class="alert alert-success" style="margin-bottom: 15px; padding: 10px; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 5px; font-size: 14px;">
+                        ${sessionScope.newsletterSuccess}
+                    </div>
+                    <c:remove var="newsletterSuccess" scope="session"/>
+                </c:if>
+                <c:if test="${not empty sessionScope.newsletterError}">
+                    <div class="alert alert-error" style="margin-bottom: 15px; padding: 10px; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px; font-size: 14px;">
+                        ${sessionScope.newsletterError}
+                    </div>
+                    <c:remove var="newsletterError" scope="session"/>
+                </c:if>
+                
                 <form action="${pageContext.request.contextPath}/newsletter" method="post">
                     <input type="email" name="email" placeholder="Nhập email của bạn" required>
                     <button type="submit">Đăng ký</button>
