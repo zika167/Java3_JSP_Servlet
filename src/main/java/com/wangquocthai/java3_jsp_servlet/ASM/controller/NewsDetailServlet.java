@@ -13,8 +13,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet(name = "NewsDetailServlet", urlPatterns = {"/news/detail/*"})
 public class NewsDetailServlet extends HttpServlet {
@@ -58,7 +60,39 @@ public class NewsDetailServlet extends HttpServlet {
                 // For now, a simple update is fine for this project's scope.
                 // newsDAO.update(news); // This might be too broad, let's assume a specific method is better
 
+                // --- Track Recently Viewed News in Session ---
+                HttpSession session = request.getSession();
+                @SuppressWarnings("unchecked")
+                List<String> recentlyViewedIds = (List<String>) session.getAttribute("recentlyViewedIds");
+                
+                if (recentlyViewedIds == null) {
+                    recentlyViewedIds = new ArrayList<>();
+                }
+                
+                // Remove if already exists (to avoid duplicates)
+                recentlyViewedIds.remove(newsId);
+                
+                // Add to the beginning (LIFO - Last In, First Out)
+                recentlyViewedIds.add(0, newsId);
+                
+                // Keep only the last 5 items
+                if (recentlyViewedIds.size() > 5) {
+                    recentlyViewedIds = recentlyViewedIds.subList(0, 5);
+                }
+                
+                // Save back to session
+                session.setAttribute("recentlyViewedIds", recentlyViewedIds);
+
+                // --- Load recently viewed news for sidebar (excluding current news) ---
+                List<String> sidebarRecentIds = new ArrayList<>(recentlyViewedIds);
+                sidebarRecentIds.remove(newsId); // Remove current news from sidebar
+                List<News> recentlyViewedNews = new ArrayList<>();
+                if (!sidebarRecentIds.isEmpty()) {
+                    recentlyViewedNews = newsDAO.findNewsByIds(sidebarRecentIds);
+                }
+
                 request.setAttribute("news", news);
+                request.setAttribute("recentlyViewedNews", recentlyViewedNews);
 
                 // Get related news (same category, excluding self)
                 List<News> relatedNews = newsDAO.findAll().stream()

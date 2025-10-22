@@ -155,8 +155,37 @@ public class NewsDAOImpl implements NewsDAO {
 
     @Override
     public List<News> findMostViewed(int limit) throws Exception {
-        String sql = "SELECT * FROM JV3_NEWS ORDER BY VIEWCOUNT DESC LIMIT ?";
+        String sql = "SELECT * FROM JV3_NEWS " +
+                "ORDER BY VIEWCOUNT DESC " +
+                "FETCH FIRST ? ROWS ONLY";
         ResultSet rs = Jdbc.executeQuery(sql, limit);
         return mapResultSetToNewsList(rs);
+    }
+
+    @Override
+    public List<News> findNewsByIds(List<String> ids) throws Exception {
+        if (ids == null || ids.isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        // Create placeholders for IN clause
+        String placeholders = String.join(",", ids.stream().map(id -> "?").toArray(String[]::new));
+        String sql = "SELECT * FROM JV3_NEWS WHERE ID IN (" + placeholders + ")";
+        
+        ResultSet rs = Jdbc.executeQuery(sql, ids.toArray());
+        List<News> allNews = mapResultSetToNewsList(rs);
+        
+        // Maintain the order of IDs as passed in (LIFO order)
+        List<News> orderedNews = new ArrayList<>();
+        for (String id : ids) {
+            for (News news : allNews) {
+                if (news.getId().equals(id)) {
+                    orderedNews.add(news);
+                    break;
+                }
+            }
+        }
+        
+        return orderedNews;
     }
 }

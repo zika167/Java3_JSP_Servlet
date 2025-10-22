@@ -895,8 +895,8 @@ body {
     background: linear-gradient(135deg, #90EE90 0%, #98FB98 100%);
 }
 
-/* Most Viewed News */
-.most-viewed-box {
+/* Recently Viewed News */
+.recently-viewed-box {
     background: white;
     border-radius: 8px;
     padding: 20px;
@@ -904,7 +904,7 @@ body {
     margin-bottom: 20px;
 }
 
-.most-viewed-box h3 {
+.recently-viewed-box h3 {
     color: #1e3c72;
     margin-bottom: 15px;
     font-size: 18px;
@@ -912,13 +912,13 @@ body {
     padding-bottom: 8px;
 }
 
-.most-viewed-list {
+.recently-viewed-list {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
-.most-viewed-item {
+.recently-viewed-item {
     display: flex;
     align-items: flex-start;
     gap: 12px;
@@ -927,7 +927,7 @@ body {
     transition: background-color 0.2s ease;
 }
 
-.most-viewed-item:hover {
+.recently-viewed-item:hover {
     background-color: #f8f9fa;
 }
 
@@ -970,6 +970,14 @@ body {
 
 .view-count {
     background: #e9ecef;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+}
+
+.view-time {
+    background: #d1ecf1;
+    color: #0c5460;
     padding: 2px 6px;
     border-radius: 3px;
     font-size: 11px;

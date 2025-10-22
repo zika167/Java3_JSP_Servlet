@@ -113,7 +113,7 @@ public class AdminNewsServlet extends HttpServlet {
             String content = request.getParameter("content");
             String image = request.getParameter("image");
             String categoryId = request.getParameter("categoryId");
-            boolean home = request.getParameter("home") != null;
+            String home = request.getParameter("home");
 
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("user");
@@ -123,7 +123,7 @@ public class AdminNewsServlet extends HttpServlet {
             news.setContent(content);
             news.setImage(image);
             news.setCategoryId(categoryId);
-            news.setHome(home ? "1" : "0");
+            news.setHome(home);
             news.setPostedDate(new Date());
             news.setAuthor(user.getId());
             news.setViewCount(0);
@@ -150,7 +150,7 @@ public class AdminNewsServlet extends HttpServlet {
             String content = request.getParameter("content");
             String image = request.getParameter("image");
             String categoryId = request.getParameter("categoryId");
-            boolean home = request.getParameter("home") != null;
+            String home = request.getParameter("home");
 
             News news = newsDAO.findById(id);
             if (news != null) {
@@ -158,7 +158,7 @@ public class AdminNewsServlet extends HttpServlet {
                 news.setContent(content);
                 news.setImage(image);
                 news.setCategoryId(categoryId);
-                news.setHome(home ? "1" : "0");
+                news.setHome(home);
 
                 int result = newsDAO.update(news);
 

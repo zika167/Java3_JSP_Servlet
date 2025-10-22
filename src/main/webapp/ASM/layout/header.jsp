@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
 <c:if test="${not empty sessionScope.lang}">
     <fmt:setLocale value="${sessionScope.lang}" scope="request" />
@@ -46,7 +47,7 @@
                     <c:choose>
                         <c:when test="${not empty sessionScope.user}">
                             <!-- User is logged in -->
-                            <div class="user-greeting">
+                            <a href="${pageContext.request.contextPath}/profile" class="user-greeting" style="text-decoration: none; color: inherit;">
                                 <c:if test="${sessionScope.user.role == 'A'}">
                                     <span class="role-badge admin">ADMIN</span>
                                 </c:if>
@@ -55,7 +56,7 @@
                                 </c:if>
                                 <i class="fas fa-user"></i>
                                 <span><fmt:message key="header.welcome"/>, ${sessionScope.user.fullname}</span>
-                            </div>
+                            </a>
                             <a href="${pageContext.request.contextPath}/auth/logout" class="utility-link">
                                 <i class="fas fa-sign-out-alt"></i> <fmt:message key="header.logout"/>
                             </a>
@@ -89,9 +90,24 @@
                     <fmt:message key="header.nav.home"/>
                 </a>
 
+                <!-- <c:forEach var="category" items="${categories}">
+                    <a href="${pageContext.request.contextPath}/category?id=${category.id}" class="nav-link">
+                        <c:set var="categoryKey" value="category.${category.id}"/>
+                        <fmt:message key="${categoryKey}" var="translatedName"/>
+                        <c:choose>
+                            <c:when test="${not empty translatedName and translatedName != categoryKey}">
+                                ${translatedName}
+                            </c:when>
+                            <c:otherwise>
+                                ${category.name}
+                            </c:otherwise>
+                        </c:choose>
+                    </a>
+                </c:forEach> -->
                 <c:forEach var="category" items="${categories}">
                     <a href="${pageContext.request.contextPath}/category?id=${category.id}" class="nav-link">
-                        ${category.name}
+                        <%-- Tạo key động theo ID và hiển thị --%>
+                        <fmt:message key="category.${category.id}"/> 
                     </a>
                 </c:forEach>
 
@@ -230,23 +246,4 @@
 </div>
 
 <!-- Auth Modal Script -->
-<script src="${pageContext.request.contextPath}/ASM/assets/js/auth-modal.js"></script>
-
-<!-- Favicon and Meta Tags -->
-<link rel="apple-touch-icon" sizes="57x57" href="${pageContext.request.contextPath}/ASM/assets/favicon/apple-icon-57x57.png">
-<link rel="apple-touch-icon" sizes="60x60" href="${pageContext.request.contextPath}/ASM/assets/favicon/apple-icon-60x60.png">
-<link rel="apple-touch-icon" sizes="72x72" href="${pageContext.request.contextPath}/ASM/assets/favicon/apple-icon-72x72.png">
-<link rel="apple-touch-icon" sizes="76x76" href="${pageContext.request.contextPath}/ASM/assets/favicon/apple-icon-76x76.png">
-<link rel="apple-touch-icon" sizes="114x114" href="${pageContext.request.contextPath}/ASM/assets/favicon/apple-icon-114x114.png">
-<link rel="apple-touch-icon" sizes="120x120" href="${pageContext.request.contextPath}/ASM/assets/favicon/apple-icon-120x120.png">
-<link rel="apple-touch-icon" sizes="144x144" href="${pageContext.request.contextPath}/ASM/assets/favicon/apple-icon-144x144.png">
-<link rel="apple-touch-icon" sizes="152x152" href="${pageContext.request.contextPath}/ASM/assets/favicon/apple-icon-152x152.png">
-<link rel="apple-touch-icon" sizes="180x180" href="${pageContext.request.contextPath}/ASM/assets/favicon/apple-icon-180x180.png">
-<link rel="icon" type="image/png" sizes="192x192" href="${pageContext.request.contextPath}/ASM/assets/favicon/android-icon-192x192.png">
-<link rel="icon" type="image/png" sizes="32x32" href="${pageContext.request.contextPath}/ASM/assets/favicon/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="96x96" href="${pageContext.request.contextPath}/ASM/assets/favicon/favicon-96x96.png">
-<link rel="icon" type="image/png" sizes="16x16" href="${pageContext.request.contextPath}/ASM/assets/favicon/favicon-16x16.png">
-<link rel="manifest" href="${pageContext.request.contextPath}/ASM/assets/favicon/manifest.json">
-<meta name="msapplication-TileColor" content="#ffffff">
-<meta name="msapplication-TileImage" content="${pageContext.request.contextPath}/ASM/assets/favicon/ms-icon-144x144.png">
-<meta name="theme-color" content="#ffffff">
+<script src="${pageContext.request.contextPath}/ASM/assets/js/auth-modal.js?v=1.1"></script>

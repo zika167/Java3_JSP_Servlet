@@ -13,7 +13,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet(name = "ReaderServlet", urlPatterns = {"/reader"})
 public class ReaderServlet extends HttpServlet {
@@ -50,13 +52,20 @@ public class ReaderServlet extends HttpServlet {
             int totalNews = newsDAO.countTotalNews();
             int totalPages = (int) Math.ceil((double) totalNews / pageSize);
 
-            // --- Load 5 most viewed news for sidebar ---
-            List<News> mostViewedNews = newsDAO.findMostViewed(5);
+            // --- Load recently viewed news for sidebar ---
+            HttpSession session = request.getSession();
+            @SuppressWarnings("unchecked")
+            List<String> recentlyViewedIds = (List<String>) session.getAttribute("recentlyViewedIds");
+            List<News> recentlyViewedNews = new ArrayList<>();
+            
+            if (recentlyViewedIds != null && !recentlyViewedIds.isEmpty()) {
+                recentlyViewedNews = newsDAO.findNewsByIds(recentlyViewedIds);
+            }
 
             request.setAttribute("newsList", newsList);
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
-            request.setAttribute("mostViewedNews", mostViewedNews);
+            request.setAttribute("recentlyViewedNews", recentlyViewedNews);
 
             request.getRequestDispatcher("/ASM/reader/news_list.jsp").forward(request, response);
         } catch (Exception e) {

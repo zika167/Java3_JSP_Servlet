@@ -29,12 +29,58 @@ class AuthModal {
         this.signupForm = document.getElementById('signupForm');
 
         if (!this.overlay || !this.container) {
-            console.warn('Auth modal elements not found');
+            console.error('Auth modal elements not found:', {
+                overlay: !!this.overlay,
+                container: !!this.container,
+                loginForm: !!this.loginForm,
+                signupForm: !!this.signupForm
+            });
             return;
         }
 
+        console.log('Auth modal initialized successfully');
+        
+        // Set initial state - ensure login form is active by default
+        this.setInitialState();
+        
         // Setup event listeners
         this.setupEventListeners();
+    }
+
+    setInitialState() {
+        // Ensure login tab and form are active by default
+        const loginTab = document.querySelector('.modal-tab[data-tab="login"]');
+        const signupTab = document.querySelector('.modal-tab[data-tab="signup"]');
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        
+        console.log('setInitialState called');
+        console.log('Elements found:', { 
+            loginTab: !!loginTab, 
+            signupTab: !!signupTab, 
+            loginForm: !!loginForm, 
+            signupForm: !!signupForm 
+        });
+        
+        if (loginTab) {
+            loginTab.classList.add('active');
+            console.log('Login tab classes after add:', loginTab.className);
+        }
+        if (signupTab) {
+            signupTab.classList.remove('active');
+            console.log('Signup tab classes after remove:', signupTab.className);
+        }
+        if (loginForm) {
+            loginForm.classList.add('active');
+            console.log('Login form classes after add:', loginForm.className);
+            console.log('Login form computed display:', window.getComputedStyle(loginForm).display);
+        }
+        if (signupForm) {
+            signupForm.classList.remove('active');
+            console.log('Signup form classes after remove:', signupForm.className);
+        }
+        
+        console.log('Initial state set - login form should be active');
     }
 
     setupEventListeners() {
@@ -90,10 +136,18 @@ class AuthModal {
     }
 
     open(tab = 'login') {
+        console.log('Opening modal with tab:', tab);
         this.overlay.classList.add('active');
         this.container.classList.add('active');
         document.body.style.overflow = 'hidden';
-        this.switchTab(tab);
+        
+        // Force set initial state again when opening
+        this.setInitialState();
+        
+        // Then switch to requested tab with a small delay to ensure DOM is ready
+        setTimeout(() => {
+            this.switchTab(tab);
+        }, 10);
     }
 
     close() {
@@ -105,17 +159,68 @@ class AuthModal {
     }
 
     switchTab(tab) {
+        console.log('Switching to tab:', tab);
+        
         // Update tabs
         document.querySelectorAll('.modal-tab').forEach(t => {
             t.classList.toggle('active', t.getAttribute('data-tab') === tab);
         });
 
-        // Update forms
-        document.querySelectorAll('.modal-form').forEach(f => {
-            f.classList.toggle('active', f.id === `${tab}Form`);
-        });
+        // Update forms - more specific approach
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        
+        if (loginForm && signupForm) {
+            if (tab === 'login') {
+                loginForm.classList.add('active');
+                signupForm.classList.remove('active');
+                console.log('Login form activated');
+                console.log('Login form display:', window.getComputedStyle(loginForm).display);
+                console.log('Login form classes:', loginForm.className);
+            } else if (tab === 'signup') {
+                signupForm.classList.add('active');
+                loginForm.classList.remove('active');
+                console.log('Signup form activated');
+                console.log('Signup form display:', window.getComputedStyle(signupForm).display);
+                console.log('Signup form classes:', signupForm.className);
+            }
+        } else {
+            console.error('Forms not found:', { loginForm: !!loginForm, signupForm: !!signupForm });
+        }
 
         this.clearMessages();
+        
+        // Debug current state after switch
+        this.debugCurrentState();
+    }
+
+    // Debug method to check current state
+    debugCurrentState() {
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const loginTab = document.querySelector('.modal-tab[data-tab="login"]');
+        const signupTab = document.querySelector('.modal-tab[data-tab="signup"]');
+        
+        console.log('=== CURRENT STATE DEBUG ===');
+        console.log('Login form:', {
+            exists: !!loginForm,
+            classes: loginForm ? loginForm.className : 'N/A',
+            display: loginForm ? window.getComputedStyle(loginForm).display : 'N/A'
+        });
+        console.log('Signup form:', {
+            exists: !!signupForm,
+            classes: signupForm ? signupForm.className : 'N/A',
+            display: signupForm ? window.getComputedStyle(signupForm).display : 'N/A'
+        });
+        console.log('Login tab:', {
+            exists: !!loginTab,
+            classes: loginTab ? loginTab.className : 'N/A'
+        });
+        console.log('Signup tab:', {
+            exists: !!signupTab,
+            classes: signupTab ? signupTab.className : 'N/A'
+        });
+        console.log('=== END DEBUG ===');
     }
 
     async handleLogin() {
@@ -255,3 +360,6 @@ class AuthModal {
 
 // Initialize modal when script loads
 const authModal = new AuthModal();
+
+// Make debug method available globally for testing
+window.debugAuthModal = () => authModal.debugCurrentState();

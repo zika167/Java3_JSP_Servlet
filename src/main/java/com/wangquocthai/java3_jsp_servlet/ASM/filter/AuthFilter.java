@@ -24,6 +24,7 @@ public class AuthFilter implements Filter {
         if (path.startsWith("/ASM/assets/") ||
             path.startsWith("/auth/") ||
             path.startsWith("/reader") ||
+            path.startsWith("/lang") ||
             path.startsWith("/news/detail") ||
             path.equals("/") ||
             path.equals("/index.jsp") ||

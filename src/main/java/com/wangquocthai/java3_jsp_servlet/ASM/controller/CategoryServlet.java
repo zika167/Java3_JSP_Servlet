@@ -13,7 +13,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/category")
 public class CategoryServlet extends HttpServlet {
@@ -56,14 +58,21 @@ public class CategoryServlet extends HttpServlet {
             int totalNews = newsDAO.countTotalNewsByCategory(categoryId);
             int totalPages = (int) Math.ceil((double) totalNews / pageSize);
 
-            // --- Load 5 most viewed news for sidebar ---
-            List<News> mostViewedNews = newsDAO.findMostViewed(5);
+            // --- Load recently viewed news for sidebar ---
+            HttpSession session = request.getSession();
+            @SuppressWarnings("unchecked")
+            List<String> recentlyViewedIds = (List<String>) session.getAttribute("recentlyViewedIds");
+            List<News> recentlyViewedNews = new ArrayList<>();
+            
+            if (recentlyViewedIds != null && !recentlyViewedIds.isEmpty()) {
+                recentlyViewedNews = newsDAO.findNewsByIds(recentlyViewedIds);
+            }
 
             request.setAttribute("newsList", newsList);
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("selectedCategoryId", categoryId); // To highlight active category
-            request.setAttribute("mostViewedNews", mostViewedNews);
+            request.setAttribute("recentlyViewedNews", recentlyViewedNews);
 
             // Forward to the same view as ReaderServlet for consistency
             request.getRequestDispatcher("/ASM/reader/news_list.jsp").forward(request, response);

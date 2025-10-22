@@ -88,10 +88,16 @@
                                 <td>${category.name}</td>
                                 <td class="actions">
                                     <a href="${pageContext.request.contextPath}/admin/category?action=EDIT&id=${category.id}" 
-                                       class="btn btn-sm btn-edit">Sửa</a>
+                                        class="btn btn-sm btn-edit">
+                                        <i class="fas fa-edit"></i>
+                                        Sửa
+                                    </a>
                                     <a href="javascript:void(0)" 
-                                       onclick="confirmDelete('${category.id}', '${category.name}')" 
-                                       class="btn btn-sm btn-delete">Xóa</a>
+                                        onclick="confirmDelete('${category.id}', '${category.name}')"
+                                        class="btn btn-sm btn-delete">
+                                        <i class="fas fa-trash"></i>
+                                        Xóa
+                                    </a>
                                 </td>
                             </tr>
                         </c:forEach>

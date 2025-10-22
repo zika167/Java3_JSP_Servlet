@@ -4,8 +4,7 @@
 <html>
 <head>
     <title>ABC News - Quản lý tin tức</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/ASM/assets/css/admin.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/ASM/assets/css/admin-enhanced.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/ASM/assets/css/reporter.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="context-path" content="${pageContext.request.contextPath}">
 </head>
@@ -117,7 +116,7 @@
                                     </td>
                                     <td class="actions">
                                         <button class="btn btn-sm btn-edit" onclick="editArticle(this)">Sửa</button>
-                                        <a href="${pageContext.request.contextPath}/reporter?action=delete&id=${news.id}" class="btn btn-sm btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa bài viết này?')">Xóa</a>
+                                        <a href="${pageContext.request.contextPath}/admin/news?action=delete&id=${news.id}" class="btn btn-sm btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa bài viết này?')">Xóa</a>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -154,7 +153,7 @@
             btnCreate.disabled = false;
             btnUpdate.disabled = true;
             // Reset form action in case it was changed by editArticle
-            form.action = '${pageContext.request.contextPath}/reporter';
+            form.action = '${pageContext.request.contextPath}/admin/news';
         }
 
         function editArticle(button) {
@@ -180,7 +179,7 @@
             btnUpdate.disabled = false;
             
             // Change form action to point to the update logic
-            form.action = '${pageContext.request.contextPath}/reporter';
+            form.action = '${pageContext.request.contextPath}/admin/news';
 
             // Cuộn lên đầu trang để xem form
             window.scrollTo(0, 0);

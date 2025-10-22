@@ -120,25 +120,25 @@
                 </div>
             </div>
 
-            <!-- 5 tin tức được xem gần nhất -->
-            <div class="sidebar-box most-viewed-box">
-                <h3>5 bản tin được xem nhiều</h3>
-                <div class="most-viewed-list">
-                    <c:forEach var="viewedNews" items="${mostViewedNews}" varStatus="status">
-                        <div class="most-viewed-item">
+            <!-- 5 tin tức xem gần đây -->
+            <div class="sidebar-box recently-viewed-box">
+                <h3>5 bản tin xem gần đây</h3>
+                <div class="recently-viewed-list">
+                    <c:forEach var="recentNews" items="${recentlyViewedNews}" varStatus="status">
+                        <div class="recently-viewed-item">
                             <span class="item-number">${status.index + 1}</span>
                             <div class="item-content">
-                                <a href="${pageContext.request.contextPath}/news/detail/${viewedNews.id}" class="item-title">
-                                    ${viewedNews.title}
+                                <a href="${pageContext.request.contextPath}/news/detail/${recentNews.id}" class="item-title">
+                                    ${recentNews.title}
                                 </a>
                                 <div class="item-meta">
-                                    <span class="view-count">${viewedNews.viewCount} lượt xem</span>
+                                    <span class="view-time">Đã xem</span>
                                 </div>
                             </div>
                         </div>
                     </c:forEach>
-                    <c:if test="${empty mostViewedNews}">
-                        <p style="text-align: center; color: #666; font-style: italic;">Chưa có tin tức nào</p>
+                    <c:if test="${empty recentlyViewedNews}">
+                        <p style="text-align: center; color: #666; font-style: italic;">Chưa xem tin tức nào</p>
                     </c:if>
                 </div>
             </div>

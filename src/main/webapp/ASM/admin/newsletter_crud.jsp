@@ -88,16 +88,22 @@
                             <tr>
                                 <td>${newsletter.email}</td>
                                 <td>
-                                    <span class="status-badge ${newsletter.enabled ? 'status-active' : 'status-inactive'}">
+                                    <span class="status ${newsletter.enabled ? 'status-active' : 'status-inactive'}">
                                         ${newsletter.enabled ? 'Kích hoạt' : 'Vô hiệu hóa'}
                                     </span>
                                 </td>
                                 <td class="actions">
                                     <a href="${pageContext.request.contextPath}/admin/newsletter?action=EDIT&email=${newsletter.email}" 
-                                       class="btn btn-sm btn-edit">Sửa</a>
+                                        class="btn btn-sm btn-edit">
+                                        <i class="fas fa-edit"></i>
+                                        Sửa
+                                    </a>
                                     <a href="javascript:void(0)" 
-                                       onclick="confirmDelete('${newsletter.email}')" 
-                                       class="btn btn-sm btn-delete">Xóa</a>
+                                        onclick="confirmDelete('${newsletter.email}')"
+                                        class="btn btn-sm btn-delete">
+                                        <i class="fas fa-trash"></i>
+                                        Xóa
+                                    </a>
                                 </td>
                             </tr>
                         </c:forEach>
