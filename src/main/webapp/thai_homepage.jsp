@@ -11,6 +11,9 @@
     <title>Title</title>
 </head>
 <body>
+    <a href="${pageContext.request.contextPath}/khachhang">Final Test</a>
+    <br/>
+    <hr/>
     <a href="${pageContext.request.contextPath}/reader">ASM: TRANG BÁO ABC NEWS</a>
     <br/>
     <hr/>

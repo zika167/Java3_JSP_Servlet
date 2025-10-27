@@ -72,7 +72,7 @@
                     </div>
 
                     <div class="form-actions">
-                        <button type="submit" id="btnCreate" class="btn btn-primary">Tạo mới</button>
+                        <button type="submit" id="btnCreate" class="btn btn-primary" disabled>Tạo mới</button>
                         <button type="submit" id="btnUpdate" class="btn btn-success" disabled>Cập nhật</button>
                         <button type="button" class="btn btn-secondary" onclick="clearForm()">Xóa trắng</button>
                     </div>

@@ -23,6 +23,7 @@ public class AuthFilter implements Filter {
         // --- Bỏ qua các tài nguyên tĩnh và các trang công khai ---
         if (path.startsWith("/ASM/assets/") ||
             path.startsWith("/auth/") ||
+            path.startsWith("/khachhang") ||
             path.startsWith("/reader") ||
             path.startsWith("/lang") ||
             path.startsWith("/news/detail") ||
